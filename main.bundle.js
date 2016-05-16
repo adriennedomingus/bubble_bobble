@@ -44,13 +44,7 @@
 /* 0 */
 /***/ function(module, exports) {
 
-	'use strict';
-
-	var sayHello = function sayHello() {
-	  return console.log('Hello');
-	};
-
-	sayHello();
+	"use strict";
 
 /***/ }
 /******/ ]);
