@@ -1,0 +1,23 @@
+.game-canvas {
+  border: 1px solid;
+  margin: auto;
+  display: block;
+  position: absolute;
+}
+
+#start-screen {
+  background-color: #00bfb2;
+  position: absolute;
+  z-index: 10;
+  height: 102px;
+  width: 202px;
+  text-align: center;
+}
+
+.hidden {
+  display: none;
+}
+
+.container {
+  margin-top: 15px;
+}
