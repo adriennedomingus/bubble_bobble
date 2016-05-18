@@ -1,9 +1,11 @@
 var assert = require('chai').assert;
 var Dinosaur = require('../lib/dinosaur');
+var Floor = require('../lib/floors');
 
 describe('dinosaur', function(){
   beforeEach(function(){
      this.canvas = { width: 200, height: 100};
+     this.floors = [new Floor(this.canvas,0,this.canvas.height-10,this.canvas.width)]
      this.dino_img_left = document.createElement('img');
      this.dino_img_right = document.createElement('img');
      this.dino = new Dinosaur(this.canvas, this.dino_img_left, this.dino_img_right);
@@ -68,14 +70,14 @@ describe('dinosaur', function(){
   });
 
   it('does not move if it is not jumping', function(){
-    this.dino.move();
+    this.dino.move([]);
     assert.equal(this.dino.x, 100);
-    assert.equal(this.dino.y, 75);
+    assert.equal(this.dino.y, 76);
   });
 
   it('does move if jumping', function(){
     this.dino.status = "jumping";
-    this.dino.move();
+    this.dino.move([]);
     assert.equal(this.dino.x, 100);
     assert.equal(this.dino.y, 75-this.dino.jumpSize);
     assert.equal(this.dino.count, 1);
@@ -114,5 +116,11 @@ describe('dinosaur', function(){
     this.dino.move();
     assert.equal(this.dino.rebornTime, 0);
   });
+
+  it('hits the floor by default', function(){
+    this.dino.y++;
+    var result = this.dino.onAFloor(this.floors);
+    assert(result);
+  })
 
 });
