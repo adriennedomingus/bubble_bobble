@@ -22,6 +22,9 @@ describe('dinosaur', function(){
     assert.equal(this.dino.canvas, this.canvas);
     assert.equal(this.dino.lives, 3);
     assert.equal(this.dino.rebornTime, 0);
+    assert.equal(this.dino.jumpSteps, 15);
+    assert.equal(this.dino.jumpTotal, 80);
+    assert.equal(this.dino.jumpSize, 80/15);
   });
 
   it('has a mouth', function(){
@@ -74,13 +77,13 @@ describe('dinosaur', function(){
     this.dino.status = "jumping";
     this.dino.move();
     assert.equal(this.dino.x, 100);
-    assert.equal(this.dino.y, 73);
+    assert.equal(this.dino.y, 75-this.dino.jumpSize);
     assert.equal(this.dino.count, 1);
   });
 
   it('jumps', function(){
     this.dino.jump();
-    assert.equal(this.dino.y, 73);
+    assert.equal(this.dino.y, 75-this.dino.jumpSize);
     assert.equal(this.dino.count, 1);
     this.dino.count = 16;
     this.dino.jump();
