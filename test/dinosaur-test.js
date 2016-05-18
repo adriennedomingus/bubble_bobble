@@ -82,15 +82,15 @@ describe('dinosaur', function(){
   });
 
   it('jumps', function(){
-    this.dino.jump();
+    this.dino.jump([]);
     assert.equal(this.dino.y, 75-this.dino.jumpSize);
     assert.equal(this.dino.count, 1);
     this.dino.count = 16;
-    this.dino.jump();
+    this.dino.jump([]);
     assert.equal(this.dino.y, 75);
     assert.equal(this.dino.count, 17);
     this.dino.count = 30;
-    this.dino.jump();
+    this.dino.jump([]);
     assert.equal(this.dino.y, 75);
     assert.equal(this.dino.count, 0);
     assert.equal(this.dino.status, null);
