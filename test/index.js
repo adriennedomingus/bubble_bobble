@@ -3,3 +3,4 @@ require('../test/bubbles-test');
 require('../test/collision-test');
 require('../test/windup-test');
 require('../test/fruits-test');
+require('../test/floors-test');

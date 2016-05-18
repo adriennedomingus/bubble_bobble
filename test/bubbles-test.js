@@ -8,7 +8,7 @@ describe('bubble', function(){
   });
 
   it('has initial properties', function(){
-    assert.equal(this.bubble.x, 35);
+    assert.equal(this.bubble.x, 38);
     assert.equal(this.bubble.y, 65);
     assert.equal(this.bubble.direction, "right");
     assert.equal(this.bubble.status, "new");
@@ -21,7 +21,7 @@ describe('bubble', function(){
 
   it('moves', function(){
     this.bubble.move();
-    assert.equal(this.bubble.x, 36);
+    assert.equal(this.bubble.x, 39);
     assert.equal(this.bubble.count, 1);
     assert.equal(this.bubble.status, "new");
     this.bubble.count = 49;
