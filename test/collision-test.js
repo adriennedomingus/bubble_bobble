@@ -12,11 +12,30 @@ describe('collision', function(){
      this.dino = new Dinosaur(this.canvas, this.dino_img_left, this.dino_img_right);
   });
 
-  it('collides', function(){
+  it('is a collision if both x and y are in range', function(){
     this.bubble.x = 175;
     this.dino.x = 155;
     this.bubble.y = 82.5;
     this.dino.y = 75;
-    assert.isTrue(Collision.collideBubbleDinosaur(this.bubble, this.dino));
+    assert.isTrue(Collision.collision(this.bubble, this.dino));
   });
+
+  it('is a collision only if both x and y are in range', function(){
+    this.dino.x = 155;
+    this.dino.y = 75;
+
+    this.bubble.x = 50;
+    this.bubble.y = 82.5;
+    assert.isFalse(Collision.collision(this.bubble, this.dino));
+
+    this.bubble.x = 50;
+    this.bubble.y = 30;
+    assert.isFalse(Collision.collision(this.bubble, this.dino));
+
+    this.bubble.x = 50;
+    this.bubble.y = 30;
+    assert.isFalse(Collision.collision(this.bubble, this.dino));
+  });
+
+
 });
