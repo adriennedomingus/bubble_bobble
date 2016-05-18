@@ -15,7 +15,7 @@ describe('dinosaur', function(){
     assert.equal(this.dino.height, 25);
     assert.equal(this.dino.width, 25);
     assert.equal(this.dino.x, 100);
-    assert.equal(this.dino.y, 75);
+    assert.equal(this.dino.y, 65);
     assert.equal(this.dino.status, null);
     assert.equal(this.dino.direction, "right");
     assert.equal(this.dino.dino_img_left, this.dino_img_left);
@@ -25,16 +25,16 @@ describe('dinosaur', function(){
     assert.equal(this.dino.lives, 3);
     assert.equal(this.dino.rebornTime, 0);
     assert.equal(this.dino.jumpSteps, 15);
-    assert.equal(this.dino.jumpTotal, 80);
-    assert.equal(this.dino.jumpSize, 80/15);
+    assert.equal(this.dino.jumpTotal, 55);
+    assert.equal(this.dino.jumpSize, 55/15);
   });
 
   it('has a mouth', function(){
     assert.equal(this.dino.mouthX(), 125);
-    assert.equal(this.dino.mouthY(), 87.5);
+    assert.equal(this.dino.mouthY(), 77.5);
     this.dino.direction = "left";
     assert.equal(this.dino.mouthX(), 100);
-    assert.equal(this.dino.mouthY(), 87.5);
+    assert.equal(this.dino.mouthY(), 77.5);
   });
 
   it('uses a different image depending on direction', function() {
@@ -72,28 +72,28 @@ describe('dinosaur', function(){
   it('does not move if it is not jumping', function(){
     this.dino.move([]);
     assert.equal(this.dino.x, 100);
-    assert.equal(this.dino.y, 76);
+    assert.equal(this.dino.y, 66);
   });
 
   it('does move if jumping', function(){
     this.dino.status = "jumping";
     this.dino.move([]);
     assert.equal(this.dino.x, 100);
-    assert.equal(this.dino.y, 75-this.dino.jumpSize);
+    assert.equal(this.dino.y, 66-this.dino.jumpSize);
     assert.equal(this.dino.count, 1);
   });
 
   it('jumps', function(){
     this.dino.jump([]);
-    assert.equal(this.dino.y, 75-this.dino.jumpSize);
+    assert.equal(this.dino.y, 65-this.dino.jumpSize);
     assert.equal(this.dino.count, 1);
     this.dino.count = 16;
     this.dino.jump([]);
-    assert.equal(this.dino.y, 75);
+    assert.equal(this.dino.y, 65);
     assert.equal(this.dino.count, 17);
     this.dino.count = 30;
     this.dino.jump([]);
-    assert.equal(this.dino.y, 75);
+    assert.equal(this.dino.y, 65);
     assert.equal(this.dino.count, 0);
     assert.equal(this.dino.status, null);
   });
@@ -101,7 +101,7 @@ describe('dinosaur', function(){
   it('can be reborn', function(){
     this.dino.reborn();
     assert.equal(this.dino.x, 100);
-    assert.equal(this.dino.y, 75);
+    assert.equal(this.dino.y, 65);
     assert.equal(this.dino.status, null);
     assert.equal(this.dino.direction, "right");
     assert.equal(this.dino.count, 0);
@@ -111,9 +111,9 @@ describe('dinosaur', function(){
 
   it('has a rebornTime that decrements with every move until 0', function() {
     this.dino.rebornTime = 1;
-    this.dino.move();
+    this.dino.move([]);
     assert.equal(this.dino.rebornTime, 0);
-    this.dino.move();
+    this.dino.move([]);
     assert.equal(this.dino.rebornTime, 0);
   });
 
@@ -121,6 +121,6 @@ describe('dinosaur', function(){
     this.dino.y++;
     var result = this.dino.onAFloor(this.floors);
     assert(result);
-  })
+  });
 
 });
