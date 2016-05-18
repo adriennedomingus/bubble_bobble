@@ -3,15 +3,37 @@
 <head>
   <meta charset="utf-8">
   <title>Bubble Bobble</title>
-  <link href="lib/index.scss" rel="stylesheet">
+  <link href="style/index.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 </head>
 <body>
-  <canvas id="game"
-          class="game-canvas"
-          width="200px"
-          height="100px" style="border: 1px dashed"></canvas>
-  <img id="dino_right" src="lib/bob_right.png">
-  <img id="dino_left" src="lib/bob_left.png">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4 col-md-offset-4">
+        <canvas id="game"
+                class="game-canvas"
+                width="200px"
+                height="100px"></canvas>
+        <div id="start-screen">
+          <h3>Bubble Bobble</h3>
+          <h5>Click to Start!</h2>
+        </div>
+        <img id="dino_right" src="lib/bob_right.png">
+        <img id="dino_left" src="lib/bob_left.png">
+      </div>
+      <div class="instructions col-md-4">
+        <h3>Instructions</h3>
+        <p>Welcome to Bubble Bobble, where you are Bob the friendly dinosaur. Your goal is to capture all of the Windup Toys in a bubble without running into them or letting them catch you. Once a windup toy has been caught, pop its bubble to transform it into a goody, which you can collect for points! You must pop all bubbles to move on to the next level. </p>
+        <h4>Keys</h4>
+        <ul>
+          <li>A: move left</li>
+          <li>D: move right</li>
+          <li>W: jump</li>
+          <li>Spacebar: blow a bubble!</li>
+        </ul>
+      </div>
+    </div>
+  </div>
 
   <script src="main.bundle.js"></script>
 </body>
