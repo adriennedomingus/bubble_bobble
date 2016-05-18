@@ -20,6 +20,8 @@ describe('dinosaur', function(){
     assert.equal(this.dino.dino_img_right, this.dino_img_right);
     assert.equal(this.dino.count, 0);
     assert.equal(this.dino.canvas, this.canvas);
+    assert.equal(this.dino.lives, 3);
+    assert.equal(this.dino.rebornTime, 0);
   });
 
   it('has a mouth', function(){
@@ -90,4 +92,24 @@ describe('dinosaur', function(){
     assert.equal(this.dino.count, 0);
     assert.equal(this.dino.status, null);
   });
+
+  it('can be reborn', function(){
+    this.dino.reborn();
+    assert.equal(this.dino.x, 100);
+    assert.equal(this.dino.y, 75);
+    assert.equal(this.dino.status, null);
+    assert.equal(this.dino.direction, "right");
+    assert.equal(this.dino.count, 0);
+    assert.equal(this.dino.rebornTime, 500);
+    assert.equal(this.dino.lives, 2);
+  });
+
+  it('has a rebornTime that decrements with every move until 0', function() {
+    this.dino.rebornTime = 1;
+    this.dino.move();
+    assert.equal(this.dino.rebornTime, 0);
+    this.dino.move();
+    assert.equal(this.dino.rebornTime, 0);
+  });
+
 });
