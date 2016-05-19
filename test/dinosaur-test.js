@@ -123,4 +123,21 @@ describe('dinosaur', function(){
     assert(result);
   });
 
+  describe('set Jumping status', function() {
+    context('not jumping', function(){
+      it('changes the status to jumping', function(){
+        this.dino.setJumpingStatus();
+        assert.equal("jumping", this.dino.status);
+      });
+    });
+
+    context('already jumping', function(){
+      it('the status remains jumping', function(){
+        this.dino.setJumpingStatus();
+        assert.equal("jumping", this.dino.status);
+      });
+    });
+
+  });
+
 });
