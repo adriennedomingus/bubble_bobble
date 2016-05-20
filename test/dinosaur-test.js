@@ -5,7 +5,7 @@ var Floor = require('../lib/floors');
 describe('dinosaur', function(){
   beforeEach(function(){
      this.canvas = { width: 200, height: 100};
-     this.floors = [new Floor(this.canvas,0,this.canvas.height-10,this.canvas.width)]
+     this.floors = [new Floor(this.canvas, 0, this.canvas.height-10, 10, this.canvas.width)];
      this.dino_img_left = document.createElement('img');
      this.dino_img_right = document.createElement('img');
      this.dino = new Dinosaur(this.canvas, this.dino_img_left, this.dino_img_right);
@@ -25,8 +25,8 @@ describe('dinosaur', function(){
     assert.equal(this.dino.lives, 3);
     assert.equal(this.dino.rebornTime, 0);
     assert.equal(this.dino.jumpSteps, 15);
-    assert.equal(this.dino.jumpTotal, 55);
-    assert.equal(this.dino.jumpSize, 55/15);
+    assert.equal(this.dino.jumpTotal, 130);
+    assert.equal(this.dino.jumpSize, 130/15);
   });
 
   it('has a mouth', function(){
@@ -120,6 +120,7 @@ describe('dinosaur', function(){
   it('hits the floor by default', function(){
     this.dino.y++;
     var result = this.dino.onAFloor(this.floors);
+    console.log(result);
     assert(result);
   });
 

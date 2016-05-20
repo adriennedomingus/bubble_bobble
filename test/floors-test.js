@@ -3,7 +3,7 @@ var Floor = require('../lib/floors');
 
 describe('floor', function(){
   beforeEach(function(){
-    this.floor = new Floor(this.canvas, 50, 50, 75);
+    this.floor = new Floor(this.canvas, 50, 50, 10, 75);
   });
 
   it('has starting properties', function(){
