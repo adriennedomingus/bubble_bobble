@@ -24,7 +24,7 @@ describe('bubble', function(){
     assert.equal(this.bubble.x, 39);
     assert.equal(this.bubble.count, 1);
     assert.equal(this.bubble.status, "new");
-    this.bubble.count = 49;
+    this.bubble.count = 99;
     this.bubble.move();
     assert.equal(this.bubble.status, "floating");
   });

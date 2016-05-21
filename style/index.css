@@ -1,23 +1,35 @@
 .game-canvas {
-  border: 1px solid;
+  border-top: 10px solid #28B463;
+  border-left: 10px solid #28B463;
+  border-right: 10px solid #28B463;
   margin: auto;
   display: block;
   position: absolute;
+}
+
+#game {
+  -webkit-transition: opacity 1s linear;
 }
 
 #start-screen {
   background-color: #00bfb2;
   position: absolute;
   z-index: 10;
-  height: 102px;
-  width: 202px;
+  height: 422px;
+  width: 422px;
   text-align: center;
+  margin: auto;
 }
 
 .hidden {
   display: none;
 }
 
-.container {
-  margin-top: 15px;
+#header {
+  text-align: center;
+}
+
+.main {
+  height: 400px;
+  margin: 0 auto;
 }
