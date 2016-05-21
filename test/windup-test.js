@@ -1,10 +1,12 @@
 var assert = require('chai').assert;
 var Windup = require('../lib/windup');
+var Dinosaur = require('../lib/dinosaur');
 
 describe('windup', function(){
   beforeEach(function(){
      this.canvas = { width: 200, height: 100};
      this.windup = new Windup(this.canvas);
+     this.dino = new Dinosaur(this.canvas);
   });
 
   it('has initial properties', function(){
@@ -25,7 +27,7 @@ describe('windup', function(){
     this.windup.move();
     assert.equal(this.windup.y, 1.5);
     this.windup.y = this.canvas.height;
-    this.windup.move();
-    assert.equal(this.windup.x, 100.75);
+    this.windup.move(this.dino);
+    assert.equal(this.windup.x, 100);
   });
 });
