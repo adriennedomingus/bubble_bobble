@@ -27,4 +27,12 @@ describe('fruit', function(){
     this.fruit.fall();
     assert.equal(this.fruit.y, 100);
   });
+
+  it('cannot be collected immediately', function(){
+    assert.isFalse(this.fruit.collectible());
+    this.fruit.y = this.fruit.startingY + 11;
+    assert(this.fruit.collectible());
+    this.fruit.status = "collected";
+    assert.isFalse(this.fruit.collectible());
+  });
 });
