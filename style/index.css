@@ -7,6 +7,10 @@
   position: absolute;
 }
 
+#game {
+  -webkit-transition: opacity 1s linear;
+}
+
 #start-screen {
   background-color: #00bfb2;
   position: absolute;
