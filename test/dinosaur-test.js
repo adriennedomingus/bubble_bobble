@@ -6,9 +6,7 @@ describe('dinosaur', function(){
   beforeEach(function(){
      this.canvas = { width: 200, height: 100};
      this.floors = [new Floor(this.canvas, 0, this.canvas.height-10, 10, this.canvas.width)];
-     this.dino_img_left = document.createElement('img');
-     this.dino_img_right = document.createElement('img');
-     this.dino = new Dinosaur(this.canvas, this.dino_img_left, this.dino_img_right);
+     this.dino = new Dinosaur(this.canvas);
   });
 
   it('has starting properties', function(){
@@ -18,8 +16,6 @@ describe('dinosaur', function(){
     assert.equal(this.dino.y, 65);
     assert.equal(this.dino.status, null);
     assert.equal(this.dino.direction, "right");
-    assert.equal(this.dino.dino_img_left, this.dino_img_left);
-    assert.equal(this.dino.dino_img_right, this.dino_img_right);
     assert.equal(this.dino.count, 0);
     assert.equal(this.dino.canvas, this.canvas);
     assert.equal(this.dino.lives, 3);
