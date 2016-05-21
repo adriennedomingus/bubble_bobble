@@ -20,16 +20,23 @@ describe('windup', function(){
     assert.equal(this.windup.paceRate, 0.75);
   });
 
-  it('falls and then paces', function(){
+  it('falls', function(){
     this.windup.move(this.dino);
     assert.equal(this.windup.y, 0.75);
     this.y = this.canvas.height - 5;
     this.windup.move();
     assert.equal(this.windup.y, 1.5);
+  });
+
+  it('follows the dinosaur in both left and right', function(){
     this.windup.y = this.canvas.height;
     this.dino.x = 100;
     this.windup.x = 50;
     this.windup.move(this.dino);
     assert.equal(this.windup.x, 50.75);
+    this.dino.x = 0;
+    this.windup.x = 50;
+    this.windup.move(this.dino);
+    assert.equal(this.windup.x, 49.25);
   });
 });

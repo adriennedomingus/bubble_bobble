@@ -56,4 +56,12 @@ describe('bubble', function(){
     this.bubble.move();
     assert.equal(this.bubble.x, 195);
   });
+
+  it('can be filled up', function(){
+    this.bubble.fillUp();
+    assert.equal(this.bubble.status, "floating");
+    assert(this.bubble.filled);
+    assert.equal(this.bubble.height, 15);
+    assert.equal(this.bubble.width, 15);
+  });
 });

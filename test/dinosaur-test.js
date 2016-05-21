@@ -19,10 +19,12 @@ describe('dinosaur', function(){
     assert.equal(this.dino.count, 0);
     assert.equal(this.dino.canvas, this.canvas);
     assert.equal(this.dino.lives, 3);
+    assert.equal(this.dino.points, 0);
     assert.equal(this.dino.rebornTime, 0);
     assert.equal(this.dino.jumpSteps, 15);
     assert.equal(this.dino.jumpTotal, 130);
     assert.equal(this.dino.jumpSize, 130/15);
+    assert.equal(this.dino.level, 1);
   });
 
   it('has a mouth', function(){
@@ -39,44 +41,64 @@ describe('dinosaur', function(){
     assert.equal(this.dino.dino_img(), this.dino.dino_img_left);
   });
 
-  it('moves left', function() {
-    this.dino.left();
-    assert.equal(this.dino.x, 95);
-    assert.equal(this.dino.direction, "left");
-  });
+  context('#move', function(){
+    it('moves left', function() {
+      this.dino.left();
+      assert.equal(this.dino.x, 95);
+      assert.equal(this.dino.direction, "left");
+    });
 
-  it('cannnot move left past a wall', function(){
-    this.dino.x = 4;
-    this.dino.left();
-    assert.equal(this.dino.x, 0);
-    assert.equal(this.dino.direction, "left");
-  });
+    it('cannnot move left past a wall', function(){
+      this.dino.x = 4;
+      this.dino.left();
+      assert.equal(this.dino.x, 0);
+      assert.equal(this.dino.direction, "left");
+    });
 
-  it('moves right', function() {
-    this.dino.right();
-    assert.equal(this.dino.x, 105);
-    assert.equal(this.dino.direction, "right");
-  });
+    it('moves right', function() {
+      this.dino.right();
+      assert.equal(this.dino.x, 105);
+      assert.equal(this.dino.direction, "right");
+    });
 
-  it('cannnot move right past a wall', function(){
-    this.dino.x = 196;
-    this.dino.right();
-    assert.equal(this.dino.x, 175);
-    assert.equal(this.dino.direction, "right");
-  });
+    it('cannnot move right past a wall', function(){
+      this.dino.x = 196;
+      this.dino.right();
+      assert.equal(this.dino.x, 175);
+      assert.equal(this.dino.direction, "right");
+    });
 
-  it('does not move if it is not jumping', function(){
-    this.dino.move([]);
-    assert.equal(this.dino.x, 100);
-    assert.equal(this.dino.y, 66);
-  });
+    it('does not move if it is not jumping', function(){
+      this.dino.move([]);
+      assert.equal(this.dino.x, 100);
+      assert.equal(this.dino.y, 66);
+    });
 
-  it('does move if jumping', function(){
-    this.dino.status = "jumping";
-    this.dino.move([]);
-    assert.equal(this.dino.x, 100);
-    assert.equal(this.dino.y, 66-this.dino.jumpSize);
-    assert.equal(this.dino.count, 1);
+    it('does move if jumping', function(){
+      this.dino.status = "jumping";
+      this.dino.move([]);
+      assert.equal(this.dino.x, 100);
+      assert.equal(this.dino.y, 66-this.dino.jumpSize);
+      assert.equal(this.dino.count, 1);
+    });
+
+    it('decrements rebornTime', function() {
+      this.dino.rebornTime = 10;
+      this.dino.move([]);
+      assert.equal(this.dino.rebornTime, 9);
+    });
+
+    it('falls if not on a floor', function() {
+      this.dino.y = 50;
+      this.dino.move(this.floors);
+      assert.equal(this.dino.y, 51);
+    });
+
+    it('does not fall if on a floor', function() {
+      var initialY = this.dino.y;
+      this.dino.move(this.floors);
+      assert.equal(this.dino.y, initialY);
+    });
   });
 
   it('jumps', function(){
@@ -105,18 +127,20 @@ describe('dinosaur', function(){
     assert.equal(this.dino.lives, 2);
   });
 
+  it('does not get reborn if in provisional time', function(){
+    this.dino.direction = "left"
+    this.dino.rebornTime = 50;
+    this.dino.reborn();
+    assert.equal(this.dino.direction, "left")
+    assert.equal(this.dino.rebornTime, 50);
+  });
+
   it('has a rebornTime that decrements with every move until 0', function() {
     this.dino.rebornTime = 1;
     this.dino.move([]);
     assert.equal(this.dino.rebornTime, 0);
     this.dino.move([]);
     assert.equal(this.dino.rebornTime, 0);
-  });
-
-  it('hits the floor by default', function(){
-    this.dino.y++;
-    var result = this.dino.onAFloor(this.floors);
-    assert(result);
   });
 
   describe('set Jumping status', function() {

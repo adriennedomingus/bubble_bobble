@@ -34,5 +34,20 @@ describe('collision', function(){
     assert.isFalse(Collision.collision(collider, this.receiver));
   });
 
+  it('can generate a collider', function(){
+    var object = {x: 8, y: 20, width: 10, height: 16};
+    var collider = Collision.generateCollider(object);
+    assert.equal(collider.x, 13);
+    assert.equal(collider.y, 28);
+  });
+
+  it('can generate a receiver', function(){
+    var object = {x: 8, y: 20, width: 10, height: 16};
+    var receiver = Collision.generateReceiver(object);
+    assert.equal(receiver.minX, 8);
+    assert.equal(receiver.maxX, 18);
+    assert.equal(receiver.minY, 20);
+    assert.equal(receiver.maxY, 36);
+  });
 
 });
