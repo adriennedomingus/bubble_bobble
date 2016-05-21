@@ -120,7 +120,6 @@ describe('dinosaur', function(){
   it('hits the floor by default', function(){
     this.dino.y++;
     var result = this.dino.onAFloor(this.floors);
-    console.log(result);
     assert(result);
   });
 
