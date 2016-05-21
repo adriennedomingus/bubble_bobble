@@ -5,5 +5,4 @@ require('../test/windup-test');
 require('../test/fruits-test');
 require('../test/floors-test');
 require('../test/levels-test');
-require('../test/game-test');
 require('../test/game-play-test');
