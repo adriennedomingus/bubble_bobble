@@ -49,8 +49,8 @@
 	var Bubble = __webpack_require__(1);
 	var Dinosaur = __webpack_require__(2);
 	var Windup = __webpack_require__(4);
-	var Floor = __webpack_require__(5);
-	var GamePlay = __webpack_require__(6);
+	var GamePlay = __webpack_require__(5);
+	var Levels = __webpack_require__(7);
 
 	var canvas = document.getElementById('game');
 	var context = canvas.getContext('2d');
@@ -64,7 +64,6 @@
 	var windup = new Windup(canvas);
 	var bubbles = [];
 	var fruits = [];
-	var floors = [new Floor(canvas, 50, 50, 75), new Floor(canvas, 0, canvas.height - 10, canvas.width)];
 
 	document.addEventListener('keydown', function (key) {
 	  if (key.keyCode === 65) {
@@ -87,6 +86,7 @@
 	});
 
 	function gameLoop() {
+	  var floors = new Levels().whichLevel(canvas, dino.level);
 	  context.clearRect(0, 0, canvas.width, canvas.height);
 	  GamePlay.drawFloors(floors, context);
 	  dino.move(floors).draw(context);
@@ -100,6 +100,12 @@
 	  if (GamePlay.gameOver(dino)) {
 	    console.log("Game is over, please play again");
 	    return true;
+	  }
+	  var newWindup = GamePlay.levelUp(dino, fruits, windup, canvas);
+	  if (newWindup) {
+	    GamePlay.nextLevel();
+	    windup = newWindup;
+	    bubbles = [];
 	  }
 	  requestAnimationFrame(gameLoop);
 	}
@@ -163,7 +169,7 @@
 	};
 
 	function doneFloatingSidewaysOrHitAWall(bubble) {
-	  return onRightEdge(bubble) || onLeftEdge(bubble) || bubble.count === 50;
+	  return onRightEdge(bubble) || onLeftEdge(bubble) || bubble.count === 100;
 	}
 
 	function onCeiling(bubble) {
@@ -212,8 +218,9 @@
 	  this.rebornTime = 0;
 	  this.lives = 3;
 	  this.jumpSteps = 15;
-	  this.jumpTotal = 55;
+	  this.jumpTotal = 130;
 	  this.jumpSize = this.jumpTotal / this.jumpSteps;
+	  this.level = 1;
 	}
 
 	Dinosaur.prototype.reborn = function () {
@@ -387,14 +394,14 @@
 	function generateCollider(object) {
 	  return { x: object.x + object.width / 2,
 	    y: object.y + object.height / 2 };
-	};
+	}
 
 	function generateReceiver(object) {
 	  return { minX: object.x,
 	    maxX: object.x + object.width,
 	    minY: object.y,
 	    maxY: object.y + object.height };
-	};
+	}
 
 	module.exports.collision = collision;
 	module.exports.generateCollider = generateCollider;
@@ -451,28 +458,6 @@
 
 /***/ },
 /* 5 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	function Floor(canvas, x, y, width) {
-	  this.x = x;
-	  this.y = y;
-	  this.height = 10;
-	  this.width = width;
-	}
-
-	Floor.prototype.draw = function (context) {
-	  context.fillStyle = "#28B463";
-	  context.fillRect(this.x, this.y, this.width, this.height);
-	  context.fillStyle = "#000";
-	  return this;
-	};
-
-	module.exports = Floor;
-
-/***/ },
-/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -489,8 +474,11 @@
 	exports.drawBubbles = drawBubbles;
 	exports.drawFruits = drawFruits;
 	exports.drawFloors = drawFloors;
+	exports.levelUp = levelUp;
+	exports.nextLevel = nextLevel;
 	var Collision = __webpack_require__(3);
-	var Fruit = __webpack_require__(7);
+	var Fruit = __webpack_require__(6);
+	var Windup = __webpack_require__(4);
 
 	function gameOver(dino) {
 	  if (dino.lives === 0) {
@@ -580,8 +568,39 @@
 	  });
 	}
 
+	function levelUp(dino, fruits, windup, canvas) {
+	  if (levelOver(windup, fruits, dino)) {
+	    if (dino.level === 1 || dino.level === 2) {
+	      var newWindup = new Windup(canvas);
+	      setTimeout(function () {
+	        dino.level++;
+	      }, 2000);
+	      return newWindup;
+	    }
+	  }
+	}
+
+	function nextLevel() {
+	  var elem = document.getElementById('game');
+	  elem.style.transition = "opacity 1s linear 0s";
+	  elem.style.opacity = 0;
+	  setTimeout(function () {
+	    elem.style.opacity = 1;
+	  }, 2000);
+	}
+
+	function allFruitsCollected(fruits) {
+	  return fruits.every(function (element) {
+	    return element.status === "collected";
+	  });
+	}
+
+	function levelOver(windup, fruits, dino) {
+	  return !windup && allFruitsCollected(fruits) && fruits.length > -1 + dino.level;
+	}
+
 /***/ },
-/* 7 */
+/* 6 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -605,7 +624,7 @@
 	};
 
 	Fruit.prototype.fall = function () {
-	  if (this.y < this.canvas.height - this.height) {
+	  if (this.y < this.canvas.height - this.height - 10) {
 	    this.count++;
 	    this.y += this.fallRate;
 	  }
@@ -617,6 +636,73 @@
 	};
 
 	module.exports = Fruit;
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var Floor = __webpack_require__(8);
+
+	function Levels() {}
+
+	Levels.prototype.whichLevel = function (canvas, level) {
+	  if (level === 1) {
+	    return levelOne(canvas);
+	  } else if (level === 2) {
+	    return levelTwo(canvas);
+	  } else if (level === 3) {
+	    return levelThree(canvas);
+	  }
+	};
+
+	function levelOne(canvas) {
+	  return [new Floor(canvas, 85, 100, 10, 230), new Floor(canvas, 85, 215, 10, 230), new Floor(canvas, 85, 315, 10, 230), new Floor(canvas, 0, 315, 10, 50), new Floor(canvas, 0, 215, 10, 50), new Floor(canvas, 0, 100, 10, 50), new Floor(canvas, 350, 100, 10, 50), new Floor(canvas, 350, 215, 10, 50), new Floor(canvas, 350, 315, 10, 50), new Floor(canvas, 0, canvas.height - 10, 10, canvas.width)];
+	}
+
+	function levelTwo(canvas) {
+	  return [new Floor(canvas, 0, canvas.height - 10, 10, canvas.width), new Floor(canvas, 55, 315, 10, 75), new Floor(canvas, 165, 315, 10, 75), new Floor(canvas, 275, 315, 10, 75), new Floor(canvas, 90, 235, 10, 225), new Floor(canvas, 140, 160, 10, 50), new Floor(canvas, 225, 160, 10, 50), new Floor(canvas, 170, 85, 10, 70)];
+	}
+
+	function levelThree(canvas) {
+	  return [new Floor(canvas, 0, canvas.height - 10, 10, canvas.width), new Floor(canvas, 0, 315, 10, 75), //1
+	  new Floor(canvas, 105, 315, 10, 50), //2
+	  new Floor(canvas, 250, 315, 10, 50), //3
+	  new Floor(canvas, 325, 315, 10, 75), //4
+	  new Floor(canvas, 50, 55, 200, 10), // left vertical
+	  new Floor(canvas, 350, 55, 200, 10), //right vertical
+	  new Floor(canvas, 50, 55, 10, 115), //top left
+	  new Floor(canvas, 50, 155, 10, 135), //left middle
+	  new Floor(canvas, 50, 255, 10, 145), //bottom left
+	  new Floor(canvas, 215, 255, 10, 145), //bottom right
+	  new Floor(canvas, 225, 155, 10, 135), //middle right
+	  new Floor(canvas, 225, 55, 10, 135)]; //top right
+	}
+
+	module.exports = Levels;
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	function Floor(canvas, x, y, height, width) {
+	  this.x = x;
+	  this.y = y;
+	  this.height = height;
+	  this.width = width;
+	}
+
+	Floor.prototype.draw = function (context) {
+	  context.fillStyle = "#28B463";
+	  context.fillRect(this.x, this.y, this.width, this.height);
+	  context.fillStyle = "#000";
+	  return this;
+	};
+
+	module.exports = Floor;
 
 /***/ }
 /******/ ]);
