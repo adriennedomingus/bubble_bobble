@@ -22,8 +22,8 @@ describe('dinosaur', function(){
     assert.equal(this.dino.points, 0);
     assert.equal(this.dino.rebornTime, 0);
     assert.equal(this.dino.jumpSteps, 15);
-    assert.equal(this.dino.jumpTotal, 130);
-    assert.equal(this.dino.jumpSize, 130/15);
+    assert.equal(this.dino.jumpTotal, 140);
+    assert.equal(this.dino.jumpSize, 140/15);
     assert.equal(this.dino.level, 1);
   });
 
@@ -71,14 +71,14 @@ describe('dinosaur', function(){
     it('does not move if it is not jumping', function(){
       this.dino.move([]);
       assert.equal(this.dino.x, 100);
-      assert.equal(this.dino.y, 66);
+      assert.equal(this.dino.y, 67);
     });
 
     it('does move if jumping', function(){
       this.dino.status = "jumping";
       this.dino.move([]);
       assert.equal(this.dino.x, 100);
-      assert.equal(this.dino.y, 66-this.dino.jumpSize);
+      assert.equal(this.dino.y, 67-this.dino.jumpSize);
       assert.equal(this.dino.count, 1);
     });
 
@@ -91,7 +91,7 @@ describe('dinosaur', function(){
     it('falls if not on a floor', function() {
       this.dino.y = 50;
       this.dino.move(this.floors);
-      assert.equal(this.dino.y, 51);
+      assert.equal(this.dino.y, 52);
     });
 
     it('does not fall if on a floor', function() {
@@ -123,15 +123,15 @@ describe('dinosaur', function(){
     assert.equal(this.dino.status, null);
     assert.equal(this.dino.direction, "right");
     assert.equal(this.dino.count, 0);
-    assert.equal(this.dino.rebornTime, 500);
+    assert.equal(this.dino.rebornTime, 150);
     assert.equal(this.dino.lives, 2);
   });
 
   it('does not get reborn if in provisional time', function(){
-    this.dino.direction = "left"
+    this.dino.direction = "left";
     this.dino.rebornTime = 50;
     this.dino.reborn();
-    assert.equal(this.dino.direction, "left")
+    assert.equal(this.dino.direction, "left");
     assert.equal(this.dino.rebornTime, 50);
   });
 
