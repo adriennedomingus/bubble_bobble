@@ -54,5 +54,21 @@
 
 .small-logo {
   margin-top: 15px;
-  height: 150px;
+  height: 125px;
+}
+
+p {
+  font-size: .75em;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+li {
+  font-size: .75em;
+}
+
+ul {
+  display: inline-block;
+  text-align: left;
+
 }
