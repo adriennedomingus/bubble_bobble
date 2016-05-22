@@ -12,13 +12,25 @@
 }
 
 #start-screen {
-  background-color: #00bfb2;
+  background-color: white;
   position: absolute;
   z-index: 10;
   height: 422px;
   width: 422px;
   text-align: center;
   margin: auto;
+  border: 1px solid black;
+}
+
+#instructions-screen {
+  background-color: white;
+  position: absolute;
+  z-index: 10;
+  height: 422px;
+  width: 422px;
+  text-align: center;
+  margin: auto;
+  border: 1px solid black;
 }
 
 .hidden {
@@ -32,4 +44,15 @@
 .main {
   height: 400px;
   margin: 0 auto;
+  margin-top: 50px;
+}
+
+.logo {
+  margin-top: 15px;
+  height: 250px;
+}
+
+.small-logo {
+  margin-top: 15px;
+  height: 150px;
 }

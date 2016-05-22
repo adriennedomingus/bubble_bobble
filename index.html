@@ -8,26 +8,18 @@
 </head>
 <body>
   <div class="container">
-    <div class="row">
-      <h3 id="header">Bubble Bobble</h3>
-    </div>
     <div class="row main">
       <canvas id="game"
               class="game-canvas"
               width="400px"
               height="400px"></canvas>
       <div id="start-screen">
-        <h3>Bubble Bobble</h3>
-        <h5>Click to Start!</h2>
+        <img src="lib/bubble_bobble_logo.png" alt="bubble bobble logo" class="logo"/>
+        <h5 id="start">Click here to start</h2>
+        <h5 id="instructions">Click here for instructions</h2>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-md-6 scores">
-        <h3>Scores</h3>
-        <p>
-        </p>
-      </div>
-      <div class="col-md-6 instructions">
+      <div id="instructions-screen" class="hidden">
+        <img src="lib/bubble_bobble_logo.png" alt="bubble bobble logo" class="small-logo"/>
         <h3>Instructions</h3>
         <p>Welcome to Bubble Bobble, where you are Bob the friendly dinosaur. Your goal is to capture all of the Windup Toys in a bubble without running into them or letting them catch you. Once a windup toy has been caught, pop its bubble to transform it into a goody, which you can collect for points! You must pop all bubbles to move on to the next level. </p>
         <h4>Keys</h4>
@@ -37,6 +29,14 @@
           <li>W: jump</li>
           <li>Spacebar: blow a bubble!</li>
         </ul>
+        <h5 id="back">Back</h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6 scores">
+        <h3>Scores</h3>
+        <p>
+        </p>
       </div>
     </div>
   </div>
