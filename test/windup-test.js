@@ -12,8 +12,8 @@ describe('windup', function(){
   it('has initial properties', function(){
     assert(this.windup.x > 0 && this.windup.x < this.canvas.width - this.windup.width);
     assert.equal(this.windup.y, 0);
-    assert.equal(this.windup.height, 17);
-    assert.equal(this.windup.width, 17);
+    assert.equal(this.windup.height, 20);
+    assert.equal(this.windup.width, 20);
     assert.equal(this.windup.canvas, this.canvas);
     assert.equal(this.windup.count, 0);
     assert.equal(this.windup.fallRate, 0.75);
