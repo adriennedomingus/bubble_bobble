@@ -53,9 +53,11 @@
 }
 
 .main {
+  width: 425px;
   height: 400px;
   margin: 0 auto;
   margin-top: 50px;
+  display: inline-block;
 }
 
 .logo {
@@ -81,5 +83,41 @@ li {
 ul {
   display: inline-block;
   text-align: left;
+
+}
+
+.scores {
+  display: inline-block;
+  height: 422px;
+  width: 300px;
+  margin-top: 50px;
+  vertical-align: top;
+  text-align: center;
+}
+
+.page {
+  width: 730px;
+  margin: auto;
+}
+
+@media (max-width: 740px) {
+  .scores {
+    display: block;
+    height: 422px;
+    width: 400px;
+    margin-top: 50px;
+    vertical-align: top;
+    margin: auto;
+    margin-top: 55px;
+    text-align: center;
+  }
+
+  .main {
+    width: 425px;
+    height: 400px;
+    margin: 0 auto;
+    margin-top: 50px;
+    display: block;
+  }
 
 }
