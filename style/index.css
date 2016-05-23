@@ -34,13 +34,14 @@
 }
 
 #end-game {
-  background-color: #00bfb2;
+  background-color: white;
   position: absolute;
   z-index: 11;
   height: 422px;
   width: 422px;
   text-align: center;
   margin: auto;
+  border: 1px solid black;
 }
 
 .hidden {
