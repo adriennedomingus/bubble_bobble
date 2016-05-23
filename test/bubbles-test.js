@@ -12,8 +12,8 @@ describe('bubble', function(){
     assert.equal(this.bubble.y, 65);
     assert.equal(this.bubble.direction, "right");
     assert.equal(this.bubble.status, "new");
-    assert.equal(this.bubble.height, 5);
-    assert.equal(this.bubble.width, 5);
+    assert.equal(this.bubble.height, 30);
+    assert.equal(this.bubble.width, 30);
     assert.equal(this.bubble.xInc, 1);
     assert.equal(this.bubble.count, 0);
     assert.equal(this.bubble.canvas, this.canvas);
@@ -52,16 +52,16 @@ describe('bubble', function(){
     this.bubble.x = 199;
     this.bubble.xInc = 1;
     this.bubble.move();
-    assert.equal(this.bubble.x, 195);
+    assert.equal(this.bubble.x, 170);
     this.bubble.move();
-    assert.equal(this.bubble.x, 195);
+    assert.equal(this.bubble.x, 170);
   });
 
   it('can be filled up', function(){
     this.bubble.fillUp();
     assert.equal(this.bubble.status, "floating");
     assert(this.bubble.filled);
-    assert.equal(this.bubble.height, 15);
-    assert.equal(this.bubble.width, 15);
+    assert.equal(this.bubble.height, 30);
+    assert.equal(this.bubble.width, 30);
   });
 });
