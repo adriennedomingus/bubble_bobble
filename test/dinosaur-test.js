@@ -29,10 +29,10 @@ describe('dinosaur', function(){
 
   it('has a mouth', function(){
     assert.equal(this.dino.mouthX(), 125);
-    assert.equal(this.dino.mouthY(), 77.5);
+    assert.equal(this.dino.mouthY(), 65);
     this.dino.direction = "left";
-    assert.equal(this.dino.mouthX(), 100);
-    assert.equal(this.dino.mouthY(), 77.5);
+    assert.equal(this.dino.mouthX(), 70);
+    assert.equal(this.dino.mouthY(), 65);
   });
 
   it('uses a different image depending on direction', function() {
