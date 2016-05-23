@@ -33,6 +33,16 @@
   border: 1px solid black;
 }
 
+#end-game {
+  background-color: #00bfb2;
+  position: absolute;
+  z-index: 11;
+  height: 422px;
+  width: 422px;
+  text-align: center;
+  margin: auto;
+}
+
 .hidden {
   display: none;
 }

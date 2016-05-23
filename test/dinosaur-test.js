@@ -1,12 +1,16 @@
 var assert = require('chai').assert;
 var Dinosaur = require('../lib/dinosaur');
 var Floor = require('../lib/floors');
+var Game = require('../lib/game');
 
 describe('dinosaur', function(){
   beforeEach(function(){
-     this.canvas = { width: 200, height: 100};
+     this.canvas = document.createElement('canvas');
+     this.canvas.width = 200;
+     this.canvas.height = 100;
      this.floors = [new Floor(this.canvas, 0, this.canvas.height-10, 10, this.canvas.width)];
      this.dino = new Dinosaur(this.canvas);
+     this.game = new Game(this.canvas);
   });
 
   it('has starting properties', function(){
@@ -43,27 +47,27 @@ describe('dinosaur', function(){
 
   context('#move', function(){
     it('moves left', function() {
-      this.dino.left();
+      this.dino.left(this.game);
       assert.equal(this.dino.x, 95);
       assert.equal(this.dino.direction, "left");
     });
 
     it('cannnot move left past a wall', function(){
       this.dino.x = 4;
-      this.dino.left();
+      this.dino.left(this.game);
       assert.equal(this.dino.x, 0);
       assert.equal(this.dino.direction, "left");
     });
 
     it('moves right', function() {
-      this.dino.right();
+      this.dino.right(this.game);
       assert.equal(this.dino.x, 105);
       assert.equal(this.dino.direction, "right");
     });
 
     it('cannnot move right past a wall', function(){
       this.dino.x = 196;
-      this.dino.right();
+      this.dino.right(this.game);
       assert.equal(this.dino.x, 175);
       assert.equal(this.dino.direction, "right");
     });
