@@ -25,18 +25,18 @@ describe('dinosaur', function(){
     assert.equal(this.dino.lives, 3);
     assert.equal(this.dino.points, 0);
     assert.equal(this.dino.rebornTime, 0);
-    assert.equal(this.dino.jumpSteps, 15);
-    assert.equal(this.dino.jumpTotal, 140);
-    assert.equal(this.dino.jumpSize, 140/15);
+    assert.equal(this.dino.jumpSteps, 20);
+    assert.equal(this.dino.jumpTotal, 150);
+    assert.equal(this.dino.jumpSize, 150/20);
     assert.equal(this.dino.level, 1);
   });
 
   it('has a mouth', function(){
     assert.equal(this.dino.mouthX(), 125);
-    assert.equal(this.dino.mouthY(), 77.5);
+    assert.equal(this.dino.mouthY(), 65);
     this.dino.direction = "left";
-    assert.equal(this.dino.mouthX(), 100);
-    assert.equal(this.dino.mouthY(), 77.5);
+    assert.equal(this.dino.mouthX(), 70);
+    assert.equal(this.dino.mouthY(), 65);
   });
 
   it('uses a different image depending on direction', function() {
@@ -48,7 +48,7 @@ describe('dinosaur', function(){
   context('#move', function(){
     it('moves left', function() {
       this.dino.left(this.game);
-      assert.equal(this.dino.x, 95);
+      assert.equal(this.dino.x, 98);
       assert.equal(this.dino.direction, "left");
     });
 
@@ -61,7 +61,7 @@ describe('dinosaur', function(){
 
     it('moves right', function() {
       this.dino.right(this.game);
-      assert.equal(this.dino.x, 105);
+      assert.equal(this.dino.x, 102);
       assert.equal(this.dino.direction, "right");
     });
 
@@ -109,11 +109,11 @@ describe('dinosaur', function(){
     this.dino.jump([]);
     assert.equal(this.dino.y, 65-this.dino.jumpSize);
     assert.equal(this.dino.count, 1);
-    this.dino.count = 16;
+    this.dino.count = 21;
     this.dino.jump([]);
     assert.equal(this.dino.y, 65);
-    assert.equal(this.dino.count, 17);
-    this.dino.count = 30;
+    assert.equal(this.dino.count, 22);
+    this.dino.count = 40;
     this.dino.jump([]);
     assert.equal(this.dino.y, 65);
     assert.equal(this.dino.count, 0);
