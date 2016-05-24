@@ -231,6 +231,7 @@
 	  this.count = 0;
 	  this.canvas = canvas;
 	  this.image = setBubbleImage('images/bubble_new.png');
+	  this.drift = 0.25;
 	  setXAndXInc(this);
 	}
 
@@ -256,7 +257,8 @@
 	    bubble.x = 0;
 	  }
 	  if (onCeiling(bubble)) {
-	    bubble.status = "done";
+	    driftX(bubble);
+	    this.status = "done";
 	  }
 	  return bubble;
 	};
@@ -266,6 +268,15 @@
 	  this.image = setBubbleImage('images/bubble_filled.png');
 	  this.filled = true;
 	};
+
+	function driftX(bubble) {
+	  if (Math.random() < 0.10) {
+	    bubble.drift *= -1;
+	  }
+	  if (bubble.drift < 0 && bubble.x > -1 * bubble.drift || bubble.drift > 0 && bubble.x < bubble.canvas.width - bubble.width - bubble.drift) {
+	    bubble.x += bubble.drift;
+	  }
+	}
 
 	function doneFloatingSidewaysOrHitAWall(bubble) {
 	  return onRightEdge(bubble) || onLeftEdge(bubble) || bubble.count === 100;
@@ -704,6 +715,8 @@
 	  if (game.keyPressed[32] || game.keyPressed[74]) {
 	    var bubble = new Bubble(game.dino.mouthX(), game.dino.mouthY(), game.dino.direction, game.canvas);
 	    game.bubbles.push(bubble);
+	    game.keyPressed[32] = false;
+	    game.keyPressed[74] = false;
 	  }
 	}
 
