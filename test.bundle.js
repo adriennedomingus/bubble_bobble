@@ -83,6 +83,7 @@
 
 	Game.prototype.play = function () {
 	  setKeyBindings(this);
+	  loadHighScores();
 	  setStartScreen(gameLoop, this);
 	  setEndScreen(gameLoop, this);
 	};
@@ -105,8 +106,11 @@
 	  GamePlay.drawWindups(game.windups, game.context, game.dino);
 	  GamePlay.checkDinoWindupCollisions(game.dino, game.windups);
 	  GamePlay.drawScore(game.dino, game.context);
+	  GamePlay.decrementFruitValues(game.fruits);
 	  if (GamePlay.gameOver(game.dino, game.bubbles, game.windups, game.fruits)) {
-	    GamePlay.endGameSequence();
+	    recordScore(game);
+	    loadHighScores();
+	    GamePlay.endGameSequence(game.dino);
 	    return true;
 	  }
 	  var newWindups = GamePlay.levelUp(game.dino, game.fruits, game.windups, game.canvas, game.bubbles);
@@ -119,11 +123,8 @@
 
 	function setKeyBindings(game) {
 	  document.addEventListener('keydown', function (e) {
+	    e.preventDefault();
 	    game.keyPressed[e.keyCode] = true;
-	    if (e.keyCode === 89) {
-	      console.log("Hi");
-	      debugger;
-	    }
 	  }, false);
 	  document.addEventListener('keyup', function (e) {
 	    game.keyPressed[e.keyCode] = false;
@@ -151,18 +152,67 @@
 	}
 
 	function setEndScreen(gameLoop, game) {
-	  var endScreen = document.getElementById('end-game');
-	  endScreen.addEventListener('click', function () {
-	    game.dino = new Dinosaur(game.canvas);
-	    game.windups = [new Windup(game.canvas), new Windup(game.canvas)];
-	    game.bubbles = [];
-	    game.fruits = [];
-	    endScreen.className += "hidden";
-	    setKeyBindings(game.canvas, game.dino, game.bubbles);
-	    requestAnimationFrame(gameLoop.bind(game));
+	  var endScreens = [document.getElementById('end-game-lose'), document.getElementById('end-game-win')];
+	  endScreens.forEach(function (screen) {
+	    screen.addEventListener('click', function () {
+	      game.dino = new Dinosaur(game.canvas);
+	      game.windups = [new Windup(game.canvas), new Windup(game.canvas)];
+	      game.bubbles = [];
+	      game.fruits = [];
+	      screen.className += "hidden";
+	      setKeyBindings(game.canvas, game.dino, game.bubbles);
+	      requestAnimationFrame(gameLoop.bind(game));
+	    });
 	  });
 	}
 
+	function recordScore(game) {
+	  var scores = localStorage.getItem('high-scores');
+	  if (scores) {
+	    insertScore(scores, game.dino.points);
+	  } else {
+	    localStorage.setItem('high-scores', game.dino.points);
+	  }
+	}
+
+	function insertScore(scores, score) {
+	  var scoresArr = scores.split(" ");
+	  for (var i = 0; i < scoresArr.length; i++) {
+	    if (score > scoresArr[i]) {
+	      scoresArr.splice(i, 0, score);
+	      break;
+	    }
+	  }
+	  if (score <= scoresArr[scoresArr.length - 1]) {
+	    scoresArr.push(score);
+	  }
+	  localStorage.setItem('high-scores', scoresArr.slice(0, 10).join(" "));
+	}
+
+	function loadHighScores() {
+	  removeAllNodes();
+	  addHighScores();
+	}
+
+	function removeAllNodes() {
+	  var highScoreList = document.getElementById("high-score-list");
+	  while (highScoreList.firstChild) {
+	    highScoreList.removeChild(highScoreList.firstChild);
+	  }
+	}
+
+	function addHighScores() {
+	  var highScoreList = document.getElementById("high-score-list");
+	  var scores = localStorage.getItem('high-scores');
+	  if (scores) {
+	    scores = scores.split(" ");
+	    scores.forEach(function (score) {
+	      var scoreElement = document.createElement("li");
+	      scoreElement.innerHTML = score;
+	      highScoreList.appendChild(scoreElement);
+	    });
+	  }
+	}
 	module.exports = Game;
 
 /***/ },
@@ -180,7 +230,7 @@
 	  this.width = 30;
 	  this.count = 0;
 	  this.canvas = canvas;
-	  this.image = setBubbleImage('lib/bubble_new.png');
+	  this.image = setBubbleImage('images/bubble_new.png');
 	  setXAndXInc(this);
 	}
 
@@ -196,7 +246,7 @@
 	  if (doneFloatingSidewaysOrHitAWall(bubble)) {
 	    bubble.status = "floating";
 	    if (!bubble.filled) {
-	      bubble.image = setBubbleImage('lib/bubble_floating.png');
+	      bubble.image = setBubbleImage('images/bubble_floating.png');
 	    }
 	  }
 	  if (onRightEdge(bubble)) {
@@ -213,7 +263,7 @@
 
 	Bubble.prototype.fillUp = function () {
 	  this.status = "floating";
-	  this.image = setBubbleImage('lib/bubble_filled.png');
+	  this.image = setBubbleImage('images/bubble_filled.png');
 	  this.filled = true;
 	};
 
@@ -275,12 +325,12 @@
 	  this.y = canvas.height - this.height - 10;
 	  this.status = null;
 	  this.direction = "right";
-	  this.dino_img_left = createImage("lib/bob_left.png");
-	  this.dino_img_left_1 = createImage("lib/bob_left_1.png");
-	  this.dino_img_left_2 = createImage("lib/bob_left_2.png");
-	  this.dino_img_right = createImage("lib/bob_right.png");
-	  this.dino_img_right_1 = createImage("lib/bob_right_1.png");
-	  this.dino_img_right_2 = createImage("lib/bob_right_2.png");
+	  this.dino_img_left = createImage("images/bob_left.png");
+	  this.dino_img_left_1 = createImage("images/bob_left_1.png");
+	  this.dino_img_left_2 = createImage("images/bob_left_2.png");
+	  this.dino_img_right = createImage("images/bob_right.png");
+	  this.dino_img_right_1 = createImage("images/bob_right_1.png");
+	  this.dino_img_right_2 = createImage("images/bob_right_2.png");
 	  this.count = 0;
 	  this.canvas = canvas;
 	  this.points = 0;
@@ -338,8 +388,6 @@
 
 	Dinosaur.prototype.left = function (game) {
 	  var verticalFloors = findVerticalFloors(game.floors());
-	  console.log(runIntoVerticalFloor(this, verticalFloors, "left"));
-	  console.log(notOnTopWall(this));
 	  if (runIntoVerticalFloor(this, verticalFloors, "left") && notOnTopWall(this)) {
 	    this.x = this.x;
 	  } else if (this.x > 4) {
@@ -560,8 +608,8 @@
 	  this.fallRate = 0.75;
 	  this.paceRate = 0.75;
 	  this.direction = "right";
-	  this.img_right = createImage('lib/windup_right.png');
-	  this.img_left = createImage('lib/windup_left.png');
+	  this.img_right = createImage('images/windup_right.png');
+	  this.img_left = createImage('images/windup_left.png');
 	}
 
 	Windup.prototype.draw = function (context) {
@@ -630,6 +678,7 @@
 	exports.levelUp = levelUp;
 	exports.nextLevel = nextLevel;
 	exports.endGameSequence = endGameSequence;
+	exports.decrementFruitValues = decrementFruitValues;
 	var Collision = __webpack_require__(4);
 	var Fruit = __webpack_require__(7);
 	var Windup = __webpack_require__(5);
@@ -645,7 +694,6 @@
 	function respondToPresses(game) {
 	  if (game.keyPressed[65]) {
 	    game.dino.left(game);
-	    console.log(game.keyPressed);
 	  }
 	  if (game.keyPressed[68]) {
 	    game.dino.right(game);
@@ -740,7 +788,7 @@
 	}
 
 	function drawScore(dino, context) {
-	  context.font = "10px Georgia";
+	  context.font = "12px monospace";
 	  context.fillText("Score: " + dino.points, 10, 10);
 	  context.fillText("Lives: " + dino.lives, 10, 25);
 	}
@@ -774,11 +822,23 @@
 	  }, 2000);
 	}
 
-	function endGameSequence() {
+	function endGameSequence(dino) {
 	  nextLevel(null);
-	  setTimeout(function () {
-	    document.getElementById('end-game').className = "";
-	  }, 2000);
+	  if (dino.lives === 0) {
+	    setTimeout(function () {
+	      document.getElementById('end-game-lose').className = "";
+	    }, 2000);
+	  } else {
+	    setTimeout(function () {
+	      document.getElementById('end-game-win').className = "";
+	    }, 2000);
+	  }
+	}
+
+	function decrementFruitValues(fruits) {
+	  fruits.forEach(function (fruit) {
+	    fruit.points -= 1;
+	  });
 	}
 
 	function allFruitsCollected(fruits) {
@@ -845,7 +905,7 @@
 	}
 
 	function createFruitImage() {
-	  var randFruit = 'lib/fruit' + Math.round(Math.random() * 5) + '.png';
+	  var randFruit = 'images/fruit' + Math.round(Math.random() * 5) + '.png';
 	  return createImage(randFruit);
 	}
 	module.exports = Fruit;
