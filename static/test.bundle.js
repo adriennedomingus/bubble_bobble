@@ -95,7 +95,7 @@
 	  var game = this;
 	  game.context.clearRect(0, 0, game.canvas.width, game.canvas.height);
 	  GamePlay.drawFloors(game.floors(), game.context);
-	  GamePlay.Presses(game);
+	  GamePlay.respondToPresses(game);
 	  game.dino.move(game.floors()).draw(game.context);
 	  GamePlay.drawBubbles(game.bubbles, game.context);
 	  GamePlay.checkWindupBubbleCollisions(game.windups, game.bubbles);
