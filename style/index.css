@@ -11,7 +11,7 @@
   -webkit-transition: opacity 1s linear;
 }
 
-#start-screen {
+#start-screen, #instructions-screen {
   background-color: white;
   position: absolute;
   z-index: 10;
@@ -22,10 +22,10 @@
   border: 1px solid black;
 }
 
-#instructions-screen {
+#end-game-win, #end-game-lose {
   background-color: white;
   position: absolute;
-  z-index: 10;
+  z-index: 11;
   height: 422px;
   width: 422px;
   text-align: center;
@@ -33,7 +33,7 @@
   border: 1px solid black;
 }
 
-#end-game {
+#end-game-lose {
   background-color: white;
   position: absolute;
   z-index: 11;
@@ -53,9 +53,11 @@
 }
 
 .main {
+  width: 425px;
   height: 400px;
   margin: 0 auto;
   margin-top: 50px;
+  display: inline-block;
 }
 
 .logo {
@@ -72,14 +74,57 @@ p {
   font-size: .75em;
   margin-left: 20px;
   margin-right: 20px;
+  font-family: monospace;
 }
 
 li {
-  font-size: .75em;
+  font-size: 1.5em;
+  font-family: monospace;
+  list-style-type: none;
+  margin-left: -85px;
+}
+
+h3 {
+  font-family: monospace;
 }
 
 ul {
   display: inline-block;
   text-align: left;
+}
+
+.scores {
+  display: inline-block;
+  height: 422px;
+  width: 300px;
+  margin-top: 50px;
+  vertical-align: top;
+  text-align: center;
+}
+
+.page {
+  width: 730px;
+  margin: auto;
+}
+
+@media (max-width: 740px) {
+  .scores {
+    display: block;
+    height: 422px;
+    width: 400px;
+    margin-top: 50px;
+    vertical-align: top;
+    margin: auto;
+    margin-top: 55px;
+    text-align: center;
+  }
+
+  .main {
+    width: 425px;
+    height: 400px;
+    margin: 0 auto;
+    margin-top: 50px;
+    display: block;
+  }
 
 }
