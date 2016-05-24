@@ -135,6 +135,7 @@
 	  GamePlay.drawWindups(game.windups, game.context, game.dino);
 	  GamePlay.checkDinoWindupCollisions(game.dino, game.windups);
 	  GamePlay.drawScore(game.dino, game.context);
+	  GamePlay.drawScore2(game.dino2, game.context);
 	  GamePlay.decrementFruitValues(game.fruits);
 	  if (GamePlay.gameOver(game.dino, game.bubbles, game.windups, game.fruits)) {
 	    recordScore(game);
@@ -145,7 +146,7 @@
 	  var newWindups = GamePlay.levelUp(game.dino, game.fruits, game.windups, game.canvas, game.bubbles);
 	  if (newWindups) {
 	    game.windups = newWindups;
-	    GamePlay.nextLevel(game);
+	    GamePlay.nextLevel2P(game);
 	  }
 	  requestAnimationFrame(gameLoop2P.bind(game));
 	}
@@ -628,8 +629,10 @@
 	exports.drawFruits = drawFruits;
 	exports.drawFloors = drawFloors;
 	exports.drawScore = drawScore;
+	exports.drawScore2 = drawScore2;
 	exports.levelUp = levelUp;
 	exports.nextLevel = nextLevel;
+	exports.nextLevel2P = nextLevel2P;
 	exports.endGameSequence = endGameSequence;
 	exports.decrementFruitValues = decrementFruitValues;
 	var Collision = __webpack_require__(3);
@@ -774,9 +777,15 @@
 	}
 
 	function drawScore(dino, context) {
-	  context.font = "12px monospace";
+	  context.font = "16px monospace";
 	  context.fillText("Score: " + dino.points, 10, 10);
-	  context.fillText("Lives: " + dino.lives, 10, 25);
+	  context.fillText("Lives: " + dino.lives, 10, 30);
+	}
+
+	function drawScore2(dino2, context) {
+	  context.font = "16px monospace";
+	  context.fillText("Score: " + dino2.points, 300, 10);
+	  context.fillText("Lives: " + dino2.lives, 300, 30);
 	}
 
 	function levelUp(dino, fruits, windups, canvas, bubbles) {
@@ -804,6 +813,27 @@
 	      });
 	      game.dino.x = game.canvas.width / 2;
 	      game.dino.y = game.canvas.height - game.dino.height - 10;
+	    }
+	  }, 2000);
+	}
+
+	function nextLevel2P(game) {
+	  var elem = document.getElementById('game');
+	  elem.style.transition = "opacity 1s linear 0s";
+	  elem.style.opacity = 0;
+	  setTimeout(function () {
+	    elem.style.opacity = 1;
+	    if (game) {
+	      game.bubbles = [];
+	      game.windups.forEach(function (windup) {
+	        windup.y = 0;
+	      });
+	      game.dino.x = 0;
+	      game.dino.direction = "right";
+	      game.dino2.x = game.canvas.width - game.dino2.width;
+	      game.dino.y = game.canvas.height - game.dino.height - 10;
+	      game.dino2.y = game.canvas.height - game.dino.height - 10;
+	      game.dino2.direction = "left";
 	    }
 	  }, 2000);
 	}
