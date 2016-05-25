@@ -3,7 +3,6 @@
 <head>
   <meta charset="utf-8">
   <title>Bubble Bobble</title>
-  <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous"> -->
   <link href="style/index.css" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=true;">
 </head>
@@ -16,14 +15,14 @@
               height="400px"></canvas>
       <div id="start-screen">
         <img src="images/bubble_bobble_logo.png" alt="bubble bobble logo" class="logo"/>
-        <h5 id="start" class="btn btn-default">Start game: single player</h2>
-        <h5 id="start-double" class="btn btn-default">Start game: two player</h2>
-        <h5 id="instructions" class="btn btn-default">Instructions</h2>
+        <h5 id="start" class="button">Start game: single player</h2>
+        <h5 id="start-double" class="button">Start game: two player</h2>
+        <h5 id="instructions" class="button">Instructions</h2>
       </div>
       <div id="instructions-screen" class="hidden">
         <img src="images/bubble_bobble_logo.png" alt="bubble bobble logo" class="small-logo"/>
         <h3>Instructions</h3>
-        <h5 id="back" class="btn btn-default">Back</h2>
+        <h5 id="back" class="button">Back</h2>
         <p>Welcome to Bubble Bobble, where you are Bob the friendly dinosaur. Your goal is to capture all of the Windup Toys in a bubble without running into them or letting them catch you. Once a windup toy has been caught, pop its bubble to transform it into a goody, which you can collect for points! You must pop all bubbles and collect all fruit to move on to the next level. </p>
         <h5>Keys</h4>
           <p>A: move left / D: move right / W: jump / Spacebar: blow a bubble!</p>
@@ -31,17 +30,53 @@
       <div id="end-game-win" class="hidden">
         <img src="images/bubble_bobble_logo.png" alt="bubble bobble logo" class="small-logo"/>
         <h3>Game Over - You Won!</h3>
-        <h5 class="btn btn-default">New Game</h2>
+        <h5 class="button new-single">New Single Player Game</h5>
+        <h5 class="button new-double">New Two Player Game</h5>
+      </div>
+      <div id="end-game-win-bob" class="hidden">
+        <img src="images/bubble_bobble_logo.png" alt="bubble bobble logo" class="small-logo"/>
+        <h3>Game Over - All Levels Complete</h3>
+        <h3>Bob Won!</h3>
+        <h5>Sorry Bub...</h5>
+        <h5 class="button new-single">New Single Player Game</h5>
+        <h5 class="button new-double">New Two Player Game</h5>
+      </div>
+      <div id="end-game-win-bub" class="hidden">
+        <img src="images/bubble_bobble_logo.png" alt="bubble bobble logo" class="small-logo"/>
+        <h3>Game Over - All Levels Complete</h3>
+        <h3>Bub Won!</h3>
+        <h5>Sorry Bob...</h5>
+        <h5 class="button new-single">New Single Player Game</h5>
+        <h5 class="button new-double">New Two Player Game</h5>
       </div>
       <div id="end-game-lose" class="hidden">
         <img src="images/bubble_bobble_logo.png" alt="bubble bobble logo" class="small-logo"/>
         <h3>Game Over - You ran out of lives...</h3>
-        <h5 class="btn btn-default">New Game</h2>
+        <h5 class="button new-single">New Single Player Game</h5>
+        <h5 class="button new-double">New Two Player Game</h5>
+      </div>
+      <div id="end-game-lose-bub" class="hidden">
+        <img src="images/bubble_bobble_logo.png" alt="bubble bobble logo" class="small-logo"/>
+        <h3>Game Over - Bob ran out of lives...</h3>
+        <h3>Bub wins!</h3>
+        <h5 class="button new-single">New Single Player Game</h5>
+        <h5 class="button new-double">New Two Player Game</h5>
+      </div>
+      <div id="end-game-lose-bob" class="hidden">
+        <img src="images/bubble_bobble_logo.png" alt="bubble bobble logo" class="small-logo"/>
+        <h3>Game Over - Bub ran out of lives...</h3>
+        <h3>Bob wins!</h3>
+        <h5 class="button new-single">New Single Player Game</h5>
+        <h5 class="button new-double">New Two Player Game</h5>
       </div>
     </div>
     <div class="scores">
-        <h3>High Scores</h3>
-        <ul id="high-score-list"></ul>
+      <h3>High Scores: Single Player</h3>
+      <ul id="high-score-list"></ul>
+    </div>
+    <div class="scores">
+      <h3>High Scores: Double Player</h3>
+      <ul id="high-score-list-double"></ul>
     </div>
     <audio id="game-music" loop>
       <source src="audio/theme.mp3" type="audio/mpeg">
