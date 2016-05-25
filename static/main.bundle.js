@@ -86,7 +86,8 @@
 
 	function gameLoop() {
 	  var game = this;
-	  game.context.clearRect(0, 0, game.canvas.width, game.canvas.height);
+	  game.context.fillStyle = "000000";
+	  game.context.fillRect(0, 0, game.canvas.width, game.canvas.height);
 	  GamePlay.drawFloors(game.floors(), game.context);
 	  GamePlay.respondToPresses(game);
 	  game.dino.move(game.floors()).draw(game.context);
@@ -774,8 +775,10 @@
 
 	function drawScore(dino, context) {
 	  context.font = "16px monospace";
+	  context.fillStyle = "#fff";
 	  context.fillText("Score: " + dino.points, 10, 10);
 	  context.fillText("Lives: " + dino.lives, 10, 30);
+	  context.fillStyle = "#000";
 	}
 
 	function drawScore2(dino2, context) {
@@ -1087,7 +1090,7 @@
 	}
 
 	Floor.prototype.draw = function (context) {
-	  context.fillStyle = "#28B463";
+	  context.fillStyle = "#ff1d8e";
 	  context.fillRect(this.x, this.y, this.width, this.height);
 	  context.fillStyle = "#000";
 	  return this;
