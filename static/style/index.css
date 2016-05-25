@@ -22,7 +22,7 @@
   border: 1px solid black;
 }
 
-#end-game-win, #end-game-lose {
+#end-game-win, #end-game-lose, #end-game-win-bob, #end-game-win-bub, #end-game-lose-bob, #end-game-lose-bub {
   background-color: white;
   position: absolute;
   z-index: 11;
@@ -84,7 +84,7 @@ li {
   margin-left: -85px;
 }
 
-h3 {
+h3, h5{
   font-family: monospace;
 }
 
@@ -105,6 +105,15 @@ ul {
 .page {
   width: 730px;
   margin: auto;
+}
+
+.button {
+  border: 1px solid black;
+  padding: 10px;
+  width: 60%;
+  margin: auto;
+  margin-bottom: 7px;
+  border-radius: 7px;
 }
 
 @media (max-width: 740px) {
