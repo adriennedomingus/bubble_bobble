@@ -116,7 +116,8 @@
 
 	function gameLoop2P() {
 	  var game = this;
-	  game.context.clearRect(0, 0, game.canvas.width, game.canvas.height);
+	  game.context.fillStyle = "000000";
+	  game.context.fillRect(0, 0, game.canvas.width, game.canvas.height);
 	  GamePlay.drawFloors(game.floors(), game.context);
 	  GamePlay.respondToPresses2P(game);
 	  game.dino.move(game.floors()).draw(game.context);
@@ -160,10 +161,8 @@
 	    var themeMusic = document.getElementById("game-music");
 	    if (e.keyCode === 51) {
 	      themeMusic.pause();
-	      console.log("PAUSE");
 	    } else if (e.keyCode === 52) {
 	      themeMusic.play();
-	      console.log("PLAY");
 	    }
 	  }, false);
 	}
@@ -697,12 +696,12 @@
 	  if (game.keyPressed[76]) {
 	    game.dino2.right(game);
 	  }
-	  if (game.keyPressed[13]) {
+	  if (game.keyPressed[222]) {
 	    var bubble2 = new Bubble(game.dino2.mouthX(), game.dino2.mouthY(), game.dino2.direction, game.canvas);
 	    game.bubbles.push(bubble2);
-	    game.keyPressed[13] = false;
+	    game.keyPressed[222] = false;
 	  }
-	  if (game.keyPressed[222]) {
+	  if (game.keyPressed[13]) {
 	    game.dino2.setJumpingStatus();
 	  }
 	}
@@ -797,8 +796,10 @@
 
 	function drawScore2(dino2, context) {
 	  context.font = "16px monospace";
+	  context.fillStyle = "#fff";
 	  context.fillText("Score: " + dino2.points, 300, 10);
 	  context.fillText("Lives: " + dino2.lives, 300, 30);
+	  context.fillStyle = "#000";
 	}
 
 	function levelUp(dino, fruits, windups, canvas, bubbles) {
