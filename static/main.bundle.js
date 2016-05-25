@@ -156,6 +156,16 @@
 	  document.addEventListener('keyup', function (e) {
 	    game.keyPressed[e.keyCode] = false;
 	  }, false);
+	  document.addEventListener('keydown', function (e) {
+	    var themeMusic = document.getElementById("game-music");
+	    if (e.keyCode === 51) {
+	      themeMusic.pause();
+	      console.log("PAUSE");
+	    } else if (e.keyCode === 52) {
+	      themeMusic.play();
+	      console.log("PLAY");
+	    }
+	  }, false);
 	}
 
 	function setStartScreen(gameLoop, gameLoop2P, game) {
@@ -167,6 +177,8 @@
 	  var backButton = document.getElementById("back");
 	  startButton.addEventListener('click', function () {
 	    startScreen.className += "hidden";
+	    var themeMusic = document.getElementById("game-music");
+	    themeMusic.play();
 	    requestAnimationFrame(gameLoop.bind(game));
 	  });
 	  instructionsButton.addEventListener('click', function () {
@@ -179,6 +191,8 @@
 	  });
 	  startButtonDoubleBubble.addEventListener('click', function () {
 	    startScreen.className += "hidden";
+	    var themeMusic = document.getElementById("game-music");
+	    themeMusic.play();
 	    game.dino2 = new Dinosaur(game.canvas, "bub");
 	    game.dino2.x = game.canvas.width - game.dino2.width;
 	    game.dino2.direction = "left";
