@@ -88,7 +88,8 @@
 
 	function gameLoop() {
 	  var game = this;
-	  game.context.clearRect(0, 0, game.canvas.width, game.canvas.height);
+	  game.context.fillStyle = "000000";
+	  game.context.fillRect(0, 0, game.canvas.width, game.canvas.height);
 	  GamePlay.drawFloors(game.floors(), game.context);
 	  GamePlay.respondToPresses(game);
 	  game.dino.move(game.floors()).draw(game.context);
@@ -117,7 +118,8 @@
 
 	function gameLoop2P() {
 	  var game = this;
-	  game.context.clearRect(0, 0, game.canvas.width, game.canvas.height);
+	  game.context.fillStyle = "000000";
+	  game.context.fillRect(0, 0, game.canvas.width, game.canvas.height);
 	  GamePlay.drawFloors(game.floors(), game.context);
 	  GamePlay.respondToPresses2P(game);
 	  game.dino.move(game.floors()).draw(game.context);
@@ -161,6 +163,14 @@
 	  document.addEventListener('keyup', function (e) {
 	    game.keyPressed[e.keyCode] = false;
 	  }, false);
+	  document.addEventListener('keydown', function (e) {
+	    var themeMusic = document.getElementById("game-music");
+	    if (e.keyCode === 51) {
+	      themeMusic.pause();
+	    } else if (e.keyCode === 52) {
+	      themeMusic.play();
+	    }
+	  }, false);
 	}
 
 	function setStartScreen(gameLoop, gameLoop2P, game) {
@@ -172,6 +182,8 @@
 	  var backButton = document.getElementById("back");
 	  startButton.addEventListener('click', function () {
 	    startScreen.className += "hidden";
+	    var themeMusic = document.getElementById("game-music");
+	    themeMusic.play();
 	    requestAnimationFrame(gameLoop.bind(game));
 	  });
 	  instructionsButton.addEventListener('click', function () {
@@ -184,6 +196,8 @@
 	  });
 	  startButtonDoubleBubble.addEventListener('click', function () {
 	    startScreen.className += "hidden";
+	    var themeMusic = document.getElementById("game-music");
+	    themeMusic.play();
 	    game.dino2 = new Dinosaur(game.canvas, "bub");
 	    game.dino2.x = game.canvas.width - game.dino2.width;
 	    game.dino2.direction = "left";
@@ -348,12 +362,12 @@
 	    this.dino_img_right_1 = createImage("images/bob_right_1.png");
 	    this.dino_img_right_2 = createImage("images/bob_right_2.png");
 	  } else {
-	    this.dino_img_left = createImage("images/bub.png");
-	    this.dino_img_left_1 = createImage("images/bub.png");
-	    this.dino_img_left_2 = createImage("images/bub.png");
-	    this.dino_img_right = createImage("images/bub.png");
-	    this.dino_img_right_1 = createImage("images/bub.png");
-	    this.dino_img_right_2 = createImage("images/bub.png");
+	    this.dino_img_left = createImage("images/bub_left.png");
+	    this.dino_img_left_1 = createImage("images/bub_left_1.png");
+	    this.dino_img_left_2 = createImage("images/bub_left_2.png");
+	    this.dino_img_right = createImage("images/bub_right.png");
+	    this.dino_img_right_1 = createImage("images/bub_right_1.png");
+	    this.dino_img_right_2 = createImage("images/bub_right_2.png");
 	  }
 	  this.count = 0;
 	  this.canvas = canvas;
@@ -738,7 +752,7 @@
 	    game.dino.setJumpingStatus();
 	  }
 	  if (game.keyPressed[32] || game.keyPressed[74]) {
-	    var bubble = new Bubble(game.dino.mouthX(), game.dino.mouthY(), game.dino.direction, game.canvas);
+	    var bubble = new Bubble(game.dino.mouthX(), game.dino.mouthY(), game.dino.direction, game.canvas, "bob");
 	    game.bubbles.push(bubble);
 	    game.keyPressed[32] = false;
 	    game.keyPressed[74] = false;
@@ -756,7 +770,7 @@
 	    game.dino.setJumpingStatus();
 	  }
 	  if (game.keyPressed[32]) {
-	    var bubble = new Bubble(game.dino.mouthX(), game.dino.mouthY(), game.dino.direction, game.canvas);
+	    var bubble = new Bubble(game.dino.mouthX(), game.dino.mouthY(), game.dino.direction, game.canvas, "bob");
 	    game.bubbles.push(bubble);
 	    game.keyPressed[32] = false;
 	  }
@@ -766,12 +780,12 @@
 	  if (game.keyPressed[76]) {
 	    game.dino2.right(game);
 	  }
-	  if (game.keyPressed[13]) {
-	    var bubble2 = new Bubble(game.dino2.mouthX(), game.dino2.mouthY(), game.dino2.direction, game.canvas);
-	    game.bubbles.push(bubble2);
-	    game.keyPressed[13] = false;
-	  }
 	  if (game.keyPressed[222]) {
+	    var bubble2 = new Bubble(game.dino2.mouthX(), game.dino2.mouthY(), game.dino2.direction, game.canvas, "bub");
+	    game.bubbles.push(bubble2);
+	    game.keyPressed[222] = false;
+	  }
+	  if (game.keyPressed[13]) {
 	    game.dino2.setJumpingStatus();
 	  }
 	}
@@ -858,14 +872,18 @@
 
 	function drawScore(dino, context) {
 	  context.font = "16px monospace";
+	  context.fillStyle = "#fff";
 	  context.fillText("Score: " + dino.points, 10, 20);
 	  context.fillText("Lives: " + dino.lives, 10, 40);
+	  context.fillStyle = "#000";
 	}
 
 	function drawScore2(dino2, context) {
 	  context.font = "16px monospace";
+	  context.fillStyle = "#fff";
 	  context.fillText("Score: " + dino2.points, 275, 20);
 	  context.fillText("Lives: " + dino2.lives, 275, 40);
+	  context.fillStyle = "#000";
 	}
 
 	function levelUp(dino, fruits, windups, canvas, bubbles) {
@@ -1033,7 +1051,7 @@
 
 	"use strict";
 
-	function Bubble(x, y, direction, canvas) {
+	function Bubble(x, y, direction, canvas, bobOrBub) {
 	  this.x = x;
 	  this.y = y;
 	  this.direction = direction;
@@ -1042,7 +1060,12 @@
 	  this.width = 30;
 	  this.count = 0;
 	  this.canvas = canvas;
-	  this.image = setBubbleImage('images/bubble_new.png');
+	  this.dino = bobOrBub;
+	  if (bobOrBub === "bob") {
+	    this.image = setBubbleImage('images/bubble_new.png');
+	  } else {
+	    this.image = setBubbleImage('images/bub_bubble_new.png');
+	  }
 	  this.drift = 0.25;
 	  setXAndXInc(this);
 	}
@@ -1059,7 +1082,11 @@
 	  if (doneFloatingSidewaysOrHitAWall(bubble)) {
 	    bubble.status = "floating";
 	    if (!bubble.filled) {
-	      bubble.image = setBubbleImage('images/bubble_floating.png');
+	      if (this.dino === "bob") {
+	        bubble.image = setBubbleImage('images/bubble_floating.png');
+	      } else {
+	        bubble.image = setBubbleImage('images/bub_bubble_floating.png');
+	      }
 	    }
 	  }
 	  if (onRightEdge(bubble)) {
@@ -1077,7 +1104,11 @@
 
 	Bubble.prototype.fillUp = function () {
 	  this.status = "floating";
-	  this.image = setBubbleImage('images/bubble_filled.png');
+	  if (this.dino === "bob") {
+	    this.image = setBubbleImage('images/bubble_filled.png');
+	  } else {
+	    this.image = setBubbleImage('images/bub_bubble_filled.png');
+	  }
 	  this.filled = true;
 	};
 
@@ -1192,7 +1223,7 @@
 	}
 
 	Floor.prototype.draw = function (context) {
-	  context.fillStyle = "#28B463";
+	  context.fillStyle = "#ff1d8e";
 	  context.fillRect(this.x, this.y, this.width, this.height);
 	  context.fillStyle = "#000";
 	  return this;
