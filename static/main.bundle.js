@@ -76,6 +76,7 @@
 	Game.prototype.play = function () {
 	  setKeyBindings(this);
 	  loadHighScores();
+	  loadHighScores2P();
 	  setStartScreen(gameLoop, gameLoop2P, this);
 	  setEndScreen(gameLoop, this);
 	  set2PEndScreens(gameLoop2P, this);
@@ -239,7 +240,7 @@
 	function recordScore2P(game, winner) {
 	  var scores = localStorage.getItem('high-scores-2p');
 	  if (scores) {
-	    insertScore(scores, winner.points);
+	    insertScore2P(scores, winner.points);
 	  } else {
 	    localStorage.setItem('high-scores-2p', winner.points);
 	  }
@@ -257,6 +258,20 @@
 	    scoresArr.push(score);
 	  }
 	  localStorage.setItem('high-scores', scoresArr.slice(0, 10).join(" "));
+	}
+
+	function insertScore2P(scores, score) {
+	  var scoresArr = scores.split(" ");
+	  for (var i = 0; i < scoresArr.length; i++) {
+	    if (score > scoresArr[i]) {
+	      scoresArr.splice(i, 0, score);
+	      break;
+	    }
+	  }
+	  if (score <= scoresArr[scoresArr.length - 1]) {
+	    scoresArr.push(score);
+	  }
+	  localStorage.setItem('high-scores-2p', scoresArr.slice(0, 10).join(" "));
 	}
 
 	function loadHighScores() {
