@@ -668,7 +668,7 @@
 	    game.dino.setJumpingStatus();
 	  }
 	  if (game.keyPressed[32] || game.keyPressed[74]) {
-	    var bubble = new Bubble(game.dino.mouthX(), game.dino.mouthY(), game.dino.direction, game.canvas);
+	    var bubble = new Bubble(game.dino.mouthX(), game.dino.mouthY(), game.dino.direction, game.canvas, "bob");
 	    game.bubbles.push(bubble);
 	    game.keyPressed[32] = false;
 	    game.keyPressed[74] = false;
@@ -686,7 +686,7 @@
 	    game.dino.setJumpingStatus();
 	  }
 	  if (game.keyPressed[32]) {
-	    var bubble = new Bubble(game.dino.mouthX(), game.dino.mouthY(), game.dino.direction, game.canvas);
+	    var bubble = new Bubble(game.dino.mouthX(), game.dino.mouthY(), game.dino.direction, game.canvas, "bob");
 	    game.bubbles.push(bubble);
 	    game.keyPressed[32] = false;
 	  }
@@ -697,7 +697,7 @@
 	    game.dino2.right(game);
 	  }
 	  if (game.keyPressed[222]) {
-	    var bubble2 = new Bubble(game.dino2.mouthX(), game.dino2.mouthY(), game.dino2.direction, game.canvas);
+	    var bubble2 = new Bubble(game.dino2.mouthX(), game.dino2.mouthY(), game.dino2.direction, game.canvas, "bub");
 	    game.bubbles.push(bubble2);
 	    game.keyPressed[222] = false;
 	  }
@@ -946,7 +946,7 @@
 
 	"use strict";
 
-	function Bubble(x, y, direction, canvas) {
+	function Bubble(x, y, direction, canvas, bobOrBub) {
 	  this.x = x;
 	  this.y = y;
 	  this.direction = direction;
@@ -955,7 +955,12 @@
 	  this.width = 30;
 	  this.count = 0;
 	  this.canvas = canvas;
-	  this.image = setBubbleImage('images/bubble_new.png');
+	  this.dino = bobOrBub;
+	  if (bobOrBub === "bob") {
+	    this.image = setBubbleImage('images/bubble_new.png');
+	  } else {
+	    this.image = setBubbleImage('images/bub_bubble_new.png');
+	  }
 	  this.drift = 0.25;
 	  setXAndXInc(this);
 	}
@@ -972,7 +977,11 @@
 	  if (doneFloatingSidewaysOrHitAWall(bubble)) {
 	    bubble.status = "floating";
 	    if (!bubble.filled) {
-	      bubble.image = setBubbleImage('images/bubble_floating.png');
+	      if (this.dino === "bob") {
+	        bubble.image = setBubbleImage('images/bubble_floating.png');
+	      } else {
+	        bubble.image = setBubbleImage('images/bub_bubble_floating.png');
+	      }
 	    }
 	  }
 	  if (onRightEdge(bubble)) {
@@ -990,7 +999,11 @@
 
 	Bubble.prototype.fillUp = function () {
 	  this.status = "floating";
-	  this.image = setBubbleImage('images/bubble_filled.png');
+	  if (this.dino === "bob") {
+	    this.image = setBubbleImage('images/bubble_filled.png');
+	  } else {
+	    this.image = setBubbleImage('images/bub_bubble_filled.png');
+	  }
 	  this.filled = true;
 	};
 
