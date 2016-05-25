@@ -137,7 +137,7 @@
 	  GamePlay.drawScore(game.dino, game.context);
 	  GamePlay.drawScore2(game.dino2, game.context);
 	  GamePlay.decrementFruitValues(game.fruits);
-	  if (GamePlay.gameOver2P(game.dino, game.dino2, game.bubbles, game.windups, game.fruits)) {
+	  if (GamePlay.gameOver2P(game.dino, game.dino2)) {
 	    if (game.dino.points > game.dino2.points) {
 	      recordScore2P(game, game.dino);
 	    } else {
@@ -178,6 +178,7 @@
 	  var backButton = document.getElementById("back");
 	  var makeNewWindups = function makeNewWindups() {
 	    this.windups.push(new Windup(this.canvas));
+	    this.windups.push(new Windup(this.canvas));
 	  };
 	  startButton.addEventListener('click', function () {
 	    startScreen.className += "hidden";
@@ -195,8 +196,8 @@
 	  });
 	  startButtonDoubleBubble.addEventListener('click', function () {
 	    startScreen.className += "hidden";
-	    // var themeMusic  = document.getElementById("game-music");
-	    // themeMusic.play();
+	    var themeMusic = document.getElementById("game-music");
+	    themeMusic.play();
 	    game.canvas.setAttribute('width', 550);
 	    game.dino2 = new Dinosaur(game.canvas, "bub");
 	    game.dino2.x = game.canvas.width - game.dino2.width;
@@ -205,7 +206,7 @@
 	    game.windups.push(new Windup(game.canvas));
 	    game.windups.push(new Windup(game.canvas));
 	    game.floors2p = new Levels().twoPlayer(game.canvas);
-	    game.intID = setInterval(makeNewWindups.bind(game), 6000);
+	    game.intID = setInterval(makeNewWindups.bind(game), 5000);
 	    requestAnimationFrame(gameLoop2P.bind(game));
 	  });
 	}
@@ -738,8 +739,8 @@
 	  return false;
 	}
 
-	function gameOver2P(dino, dino2, bubbles, windups, fruits) {
-	  if (dino.lives === 0 || dino2.lives === 0 || dino.level === 3 && allFilledBubblesPopped(bubbles) && windups.length === 0 && allFruitsCollected(fruits)) {
+	function gameOver2P(dino, dino2) {
+	  if (dino.lives === 0 || dino2.lives === 0 || dino.points >= 10000 || dino2.points >= 10000) {
 	    return true;
 	  }
 	  return false;
