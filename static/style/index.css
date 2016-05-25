@@ -96,8 +96,9 @@ ul {
 .scores {
   display: inline-block;
   height: 422px;
-  width: 300px;
+  width: 120px;
   margin-top: 50px;
+  margin-left: 25px;
   vertical-align: top;
   text-align: center;
 }
@@ -120,12 +121,14 @@ ul {
   .scores {
     display: block;
     height: 422px;
-    width: 400px;
+    width: 200px;
     margin-top: 50px;
     vertical-align: top;
     margin: auto;
     margin-top: 55px;
     text-align: center;
+    margin-left: 30px;
+
   }
 
   .main {

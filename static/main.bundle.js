@@ -135,8 +135,12 @@
 	  GamePlay.drawScore2(game.dino2, game.context);
 	  GamePlay.decrementFruitValues(game.fruits);
 	  if (GamePlay.gameOver2P(game.dino, game.dino2, game.bubbles, game.windups, game.fruits)) {
-	    recordScore(game);
-	    loadHighScores();
+	    if (game.dino.points > game.dino2.points) {
+	      recordScore2P(game, game.dino);
+	    } else {
+	      recordScore2P(game, game.dino2);
+	    }
+	    loadHighScores2P();
 	    GamePlay.endGameSequence2P(game.dino, game.dino2);
 	    return true;
 	  }
@@ -211,6 +215,7 @@
 	      game.dino2.direction = "left";
 	      game.dino.x = 0;
 	      game.dino.lives = 3;
+	      game.dino.level = 1;
 	      game.windups = [new Windup(game.canvas), new Windup(game.canvas)];
 	      game.bubbles = [];
 	      game.fruits = [];
@@ -227,6 +232,15 @@
 	    insertScore(scores, game.dino.points);
 	  } else {
 	    localStorage.setItem('high-scores', game.dino.points);
+	  }
+	}
+
+	function recordScore2P(game, winner) {
+	  var scores = localStorage.getItem('high-scores-2p');
+	  if (scores) {
+	    insertScore(scores, winner.points);
+	  } else {
+	    localStorage.setItem('high-scores-2p', winner.points);
 	  }
 	}
 
@@ -249,8 +263,20 @@
 	  addHighScores();
 	}
 
+	function loadHighScores2P() {
+	  removeAllNodes2P();
+	  addHighScores2P();
+	}
+
 	function removeAllNodes() {
 	  var highScoreList = document.getElementById("high-score-list");
+	  while (highScoreList.firstChild) {
+	    highScoreList.removeChild(highScoreList.firstChild);
+	  }
+	}
+
+	function removeAllNodes2P() {
+	  var highScoreList = document.getElementById("high-score-list-double");
 	  while (highScoreList.firstChild) {
 	    highScoreList.removeChild(highScoreList.firstChild);
 	  }
@@ -259,6 +285,19 @@
 	function addHighScores() {
 	  var highScoreList = document.getElementById("high-score-list");
 	  var scores = localStorage.getItem('high-scores');
+	  if (scores) {
+	    scores = scores.split(" ");
+	    scores.forEach(function (score) {
+	      var scoreElement = document.createElement("li");
+	      scoreElement.innerHTML = score;
+	      highScoreList.appendChild(scoreElement);
+	    });
+	  }
+	}
+
+	function addHighScores2P() {
+	  var highScoreList = document.getElementById("high-score-list-double");
+	  var scores = localStorage.getItem('high-scores-2p');
 	  if (scores) {
 	    scores = scores.split(" ");
 	    scores.forEach(function (score) {
