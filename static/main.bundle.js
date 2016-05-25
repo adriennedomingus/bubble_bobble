@@ -216,6 +216,7 @@
 	      game.dino.x = 0;
 	      game.dino.lives = 3;
 	      game.dino.level = 1;
+	      game.dino.points = 0;
 	      game.windups = [new Windup(game.canvas), new Windup(game.canvas)];
 	      game.bubbles = [];
 	      game.fruits = [];
