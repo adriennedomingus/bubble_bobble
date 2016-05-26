@@ -177,14 +177,12 @@
 	  var startButtonDoubleBubble = document.getElementById("start-double");
 	  var instructionsButton = document.getElementById("instructions");
 	  var backButton = document.getElementById("back");
-	  var makeNewWindups = function makeNewWindups() {
-	    this.windups.push(new Windup(this.canvas));
-	    this.windups.push(new Windup(this.canvas));
-	  };
 	  startButton.addEventListener('click', function () {
 	    startScreen.className += "hidden";
 	    var themeMusic = document.getElementById("game-music");
 	    themeMusic.play();
+	    game.canvas.setAttribute('width', 400);
+	    game.canvas.style["marginLeft"] = "125px";
 	    requestAnimationFrame(gameLoop.bind(game));
 	  });
 	  instructionsButton.addEventListener('click', function () {
@@ -199,15 +197,7 @@
 	    startScreen.className += "hidden";
 	    var themeMusic = document.getElementById("game-music");
 	    themeMusic.play();
-	    game.canvas.setAttribute('width', 550);
-	    game.dino2 = new Dinosaur(game.canvas, "bub");
-	    game.dino2.x = game.canvas.width - game.dino2.width;
-	    game.dino2.direction = "left";
-	    game.dino.x = 0;
-	    game.windups.push(new Windup(game.canvas));
-	    game.windups.push(new Windup(game.canvas));
-	    game.floors2p = new Levels().twoPlayer(game.canvas);
-	    game.intID = setInterval(makeNewWindups.bind(game), 5000);
+	    reset2Pgame(game);
 	    requestAnimationFrame(gameLoop2P.bind(game));
 	  });
 	}
@@ -216,11 +206,8 @@
 	  var endScreens = document.getElementsByClassName('new-single');
 	  for (var i = 0; i < endScreens.length; i++) {
 	    endScreens[i].addEventListener('click', function () {
-	      game.dino = new Dinosaur(game.canvas, "bob");
-	      game.windups = [new Windup(game.canvas), new Windup(game.canvas)];
-	      game.bubbles = [];
-	      game.fruits = [];
 	      this.parentElement.className += "hidden";
+	      reset1Pgame(game);
 	      setKeyBindings(game);
 	      requestAnimationFrame(gameLoop.bind(game));
 	    });
@@ -231,21 +218,60 @@
 	  var endScreens = document.getElementsByClassName('new-double');
 	  for (var i = 0; i < endScreens.length; i++) {
 	    endScreens[i].addEventListener('click', function () {
-	      game.dino2 = new Dinosaur(game.canvas, "bub");
-	      game.dino2.x = game.canvas.width - game.dino2.width;
-	      game.dino2.direction = "left";
-	      game.dino.x = 0;
-	      game.dino.lives = 3;
-	      game.dino.level = 1;
-	      game.dino.points = 0;
-	      game.windups = [new Windup(game.canvas), new Windup(game.canvas)];
-	      game.bubbles = [];
-	      game.fruits = [];
 	      this.parentElement.className += "hidden";
 	      setKeyBindings(game);
+	      reset2Pgame(game);
 	      requestAnimationFrame(gameLoop2P.bind(game));
 	    });
 	  }
+	}
+
+	function reset1Pgame(game) {
+	  game.canvas.setAttribute('width', 400);
+	  game.canvas.style["marginLeft"] = "125px";
+	  game.canvas.style["borderTop"] = "10px solid #ff1d8e";
+	  game.canvas.style["borderLeft"] = "10px solid #ff1d8e";
+	  game.canvas.style["borderRight"] = "10px solid #ff1d8e";
+	  game.dino = new Dinosaur(game.canvas, "bob");
+	  game.windups = [new Windup(game.canvas), new Windup(game.canvas)];
+	  game.bubbles = [];
+	  game.fruits = [];
+	}
+
+	function reset2Pgame(game) {
+	  game.canvas.setAttribute('width', 550);
+	  game.canvas.style["marginLeft"] = "50px";
+	  game.canvas.style["borderTop"] = "20px solid #ff1d8e";
+	  game.canvas.style["borderLeft"] = "20px solid #ff1d8e";
+	  game.canvas.style["borderRight"] = "20px solid #ff1d8e";
+	  game.dino2 = new Dinosaur(game.canvas, "bub");
+	  game.dino2.x = game.canvas.width - game.dino2.width;
+	  game.dino2.direction = "left";
+	  game.dino2.floorHeight = 20;
+	  game.dino.floorHeight = 20;
+	  game.dino.x = 0;
+	  game.dino.y = game.canvas.height - game.dino.height - 20;
+	  game.dino2.y = game.canvas.height - game.dino2.height - 20;
+	  game.windups = [new Windup(game.canvas), new Windup(game.canvas), new Windup(game.canvas), new Windup(game.canvas)];
+	  game.bubbles = [];
+	  game.fruits = [];
+	  game.windups.forEach(function (windup) {
+	    windup.floorHeight = 20;
+	  });
+	  game.dino.lives = 3;
+	  game.dino.points = 0;
+	  game.dino.rebornTime = 0;
+	  game.floors2p = new Levels().twoPlayer(game.canvas);
+	  game.intID = setInterval(makeNewWindups.bind(game), 5000);
+	}
+
+	function makeNewWindups() {
+	  var nw = new Windup(this.canvas);
+	  nw.floorHeight = 20;
+	  this.windups.push(nw);
+	  nw = new Windup(this.canvas);
+	  nw.floorHeight = 20;
+	  this.windups.push(nw);
 	}
 
 	module.exports = Game;
@@ -289,12 +315,13 @@
 	  this.jumpTotal = 150;
 	  this.jumpSize = this.jumpTotal / this.jumpSteps;
 	  this.level = 1;
+	  this.floorHeight = 10;
 	}
 
 	Dinosaur.prototype.reborn = function () {
 	  if (this.rebornTime === 0) {
 	    this.x = this.canvas.width / 2;
-	    this.y = this.canvas.height - this.height - 10;
+	    this.y = this.canvas.height - this.height - this.floorHeight;
 	    this.direction = "right";
 	    this.rebornTime = 150;
 	    this.lives--;
@@ -559,6 +586,7 @@
 	  this.direction = "right";
 	  this.img_right = createImage('images/windup_right.png');
 	  this.img_left = createImage('images/windup_left.png');
+	  this.floorHeight = 10;
 	}
 
 	Windup.prototype.draw = function (context) {
@@ -575,15 +603,12 @@
 	};
 
 	Windup.prototype.fall = function () {
-	  if (this.y < this.canvas.height - this.height - 10) {
-	    this.count++;
-	    this.y += this.fallRate;
-	  }
+	  this.y += this.fallRate;
 	  return this;
 	};
 
 	Windup.prototype.move = function (dino) {
-	  if (this.y < this.canvas.height - this.height - 10) {
+	  if (this.y < this.canvas.height - this.height - this.floorHeight) {
 	    this.fall();
 	  } else if (this.x >= dino.x) {
 	    this.direction = "left";
