@@ -1002,7 +1002,7 @@
 	    setTimeout(function () {
 	      document.getElementById('end-game-lose-bob').className = "";
 	    }, 2000);
-	  } else if (bob.score > bub.score) {
+	  } else if (bob.points > bub.points) {
 	    setTimeout(function () {
 	      document.getElementById('end-game-win-bob').className = "";
 	    }, 2000);
@@ -1044,7 +1044,7 @@
 
 	"use strict";
 
-	function Fruit(canvas, startingX, startingY, points, floorHeight) {
+	function Fruit(canvas, startingX, startingY, points) {
 	  this.startingY = startingY;
 	  this.x = startingX;
 	  this.y = startingY;
