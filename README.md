@@ -10,6 +10,7 @@
 * JavaScript
 * HTML5 canvas
 * Webpack
+* Node
 * Express
 * LocalStorage
 * Mocha/Chai
