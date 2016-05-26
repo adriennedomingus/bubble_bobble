@@ -1,31 +1,46 @@
-# Game Time Starter Kit
+# Bubble Bobble
 
-To install the dependencies:
+### Team
 
-```
-npm install
-```
+* [Erinna Chen](https://github.com/erinnachen)
+* [Adrienne Domingus](https://github.com/adriennedomingus)
 
-To fire up a development server:
+### The Stack
 
-```
-npm start
-```
+* JavaScript
+* HTML5 canvas
+* Webpack
+* Node
+* Express
+* LocalStorage
+* Mocha/Chai
 
-Once the server is running, you can visit:
+### Single Player mode
 
-* `http://localhost:8080/webpack-dev-server/` to run your application.
-* `http://localhost:8080/webpack-dev-server/test.html` to run your test suite in the browser.
+A single player plays as Bob the friendly dinosaur. He must capture all of the windups with his bubbles. In order to move on to the next level, he pops the bubbles and collects the fruits they produce for points.
 
-To build the static files:
+![Gif](http://g.recordit.co/u35EwWHzXw.gif)
 
-```js
-npm run build
-```
+### Two Player Battle Zone
 
+Two players can battle each other in the battle zone, using the same keyboard. One plays Bob (in green), and the other plays Bub (in blue). If either player runs out of lives, they lose and the game ends. Otherwise, the first player to 10,000 points wins.
 
-To run tests in Node:
+![Gif](http://recordit.co/CAgkMS6US1.gif)
 
-```js
-npm test
-```
+### Testing
+
+Unit tests were written using Chai. They can be run by cloning down the project, running `npm install` and `npm start`, and then visiting `http://localhost:8080/webpack-dev-server/test.html`
+
+### Production
+
+Play the game for yourself [here](http://bubble-bobble-redux.herokuapp.com/) or find a friend and give battle mode a shot!
+
+### The Original
+* [Here's](https://www.youtube.com/watch?v=O49OgQ_kogw&t=1m2s) a YouTube video of someone really excellent playing
+* And [here](http://www.8bbit.com/play/bubble-bobble/156) is where you can play the original 8bit yourself.
+* Any question you have, and many you don't, are answered [here](http://www.gamefaqs.com/nes/563392-bubble-bobble/faqs/11179)
+
+### Our Take
+
+We tried to maintain the original feel of the game by keeping the characters 8bit, adding traditional background music, etc. We also maintained traditional features such as Bob's ability to jump up through a wall, but lands on top of it (cannot fall through a wall). Our version has a limited number of levels (compared to the original's 200+)   
+  ** Note: Bob and Bub are dragons in the original Bubble Bobble, but they're friendly neighborhood dinosaurs in ours!
