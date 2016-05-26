@@ -127,8 +127,8 @@
 	  game.dino2.move(game.floors2p).draw(game.context);
 	  GamePlay.drawBubbles(game.bubbles, game.context);
 	  GamePlay.checkWindupBubbleCollisions(game.windups, game.bubbles);
-	  GamePlay.checkDinoBubbleCollisions(game.dino, game.bubbles, game.fruits, game.canvas);
-	  GamePlay.checkDinoBubbleCollisions(game.dino2, game.bubbles, game.fruits, game.canvas);
+	  GamePlay.checkDinoBubbleCollisions(game.dino, game.bubbles, game.fruits, game.canvas, true);
+	  GamePlay.checkDinoBubbleCollisions(game.dino2, game.bubbles, game.fruits, game.canvas, true);
 	  GamePlay.drawFruits(game.fruits, game.context);
 	  GamePlay.checkDinoFruitCollisions(game.dino, game.fruits);
 	  GamePlay.checkDinoFruitCollisions(game.dino2, game.fruits);
@@ -854,13 +854,16 @@
 	  });
 	}
 
-	function checkDinoBubbleCollisions(dino, bubbles, fruits, canvas) {
+	function checkDinoBubbleCollisions(dino, bubbles, fruits, canvas, twoPlayer) {
 	  bubbles.forEach(function (bubble) {
 	    var bubble_collider = Collision.generateCollider(bubble);
 	    var dino_receiver = Collision.generateReceiver(dino);
 	    if (Collision.collision(bubble_collider, dino_receiver)) {
 	      if (bubble.filled && bubble.status !== "popped") {
 	        var fruit = new Fruit(canvas, bubble.x, bubble.y, 1000);
+	        if (twoPlayer) {
+	          fruit.floorHeight = 20;
+	        }
 	        fruits.push(fruit);
 	      }
 	      bubble.status = "popped";
@@ -1041,7 +1044,7 @@
 
 	"use strict";
 
-	function Fruit(canvas, startingX, startingY, points) {
+	function Fruit(canvas, startingX, startingY, points, floorHeight) {
 	  this.startingY = startingY;
 	  this.x = startingX;
 	  this.y = startingY;
@@ -1053,6 +1056,7 @@
 	  this.fallRate = 0.75;
 	  this.status = "new";
 	  this.image = createFruitImage();
+	  this.floorHeight = 10;
 	}
 
 	Fruit.prototype.draw = function (context) {
@@ -1061,7 +1065,7 @@
 	};
 
 	Fruit.prototype.fall = function () {
-	  if (this.y < this.canvas.height - this.height - 10) {
+	  if (this.y < this.canvas.height - this.height - this.floorHeight) {
 	    this.count++;
 	    this.y += this.fallRate;
 	  }
