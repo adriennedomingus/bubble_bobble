@@ -62,12 +62,13 @@
 	var Windup = __webpack_require__(4);
 	var GamePlay = __webpack_require__(5);
 	var Levels = __webpack_require__(8);
+	var ScoreKeeper = __webpack_require__(10);
 
 	function Game(canvas) {
 	  this.canvas = canvas;
 	  this.context = canvas.getContext('2d');
 	  this.dino = new Dinosaur(this.canvas, "bob");
-	  this.windups = [new Windup(canvas), new Windup(canvas)];
+	  this.windups = [new Windup(canvas, this.dino), new Windup(canvas, this.dino)];
 	  this.bubbles = [];
 	  this.fruits = [];
 	  this.keyPressed = {};
@@ -75,8 +76,8 @@
 
 	Game.prototype.play = function () {
 	  setKeyBindings(this);
-	  loadHighScores();
-	  loadHighScores2P();
+	  ScoreKeeper.loadHighScores();
+	  ScoreKeeper.loadHighScores2P();
 	  setStartScreen(gameLoop, gameLoop2P, this);
 	  setEndScreen(gameLoop, this);
 	  set2PEndScreens(gameLoop2P, this);
@@ -98,13 +99,13 @@
 	  GamePlay.checkDinoBubbleCollisions(game.dino, game.bubbles, game.fruits, game.canvas);
 	  GamePlay.drawFruits(game.fruits, game.context);
 	  GamePlay.checkDinoFruitCollisions(game.dino, game.fruits);
-	  GamePlay.drawWindups(game.windups, game.context, game.dino);
+	  GamePlay.drawWindups(game.windups, game.context, game.dino, game.floors());
 	  GamePlay.checkDinoWindupCollisions(game.dino, game.windups);
 	  GamePlay.drawScore(game.dino, game.context);
 	  GamePlay.decrementFruitValues(game.fruits);
 	  if (GamePlay.gameOver(game.dino, game.bubbles, game.windups, game.fruits)) {
-	    recordScore(game);
-	    loadHighScores();
+	    ScoreKeeper.recordScore(game);
+	    ScoreKeeper.loadHighScores();
 	    GamePlay.endGameSequence(game.dino);
 	    return true;
 	  }
@@ -120,37 +121,33 @@
 	  var game = this;
 	  game.context.fillStyle = "000000";
 	  game.context.fillRect(0, 0, game.canvas.width, game.canvas.height);
-	  GamePlay.drawFloors(game.floors(), game.context);
+	  GamePlay.drawFloors(game.floors2p, game.context);
 	  GamePlay.respondToPresses2P(game);
-	  game.dino.move(game.floors()).draw(game.context);
-	  game.dino2.move(game.floors()).draw(game.context);
+	  game.dino.move(game.floors2p).draw(game.context);
+	  game.dino2.move(game.floors2p).draw(game.context);
 	  GamePlay.drawBubbles(game.bubbles, game.context);
 	  GamePlay.checkWindupBubbleCollisions(game.windups, game.bubbles);
-	  GamePlay.checkDinoBubbleCollisions(game.dino, game.bubbles, game.fruits, game.canvas);
-	  GamePlay.checkDinoBubbleCollisions(game.dino2, game.bubbles, game.fruits, game.canvas);
+	  GamePlay.checkDinoBubbleCollisions(game.dino, game.bubbles, game.fruits, game.canvas, true);
+	  GamePlay.checkDinoBubbleCollisions(game.dino2, game.bubbles, game.fruits, game.canvas, true);
 	  GamePlay.drawFruits(game.fruits, game.context);
 	  GamePlay.checkDinoFruitCollisions(game.dino, game.fruits);
 	  GamePlay.checkDinoFruitCollisions(game.dino2, game.fruits);
-	  GamePlay.drawWindups(game.windups, game.context, game.dino);
+	  GamePlay.drawWindups(game.windups, game.context, game.dino, game.floors2p);
 	  GamePlay.checkDinoWindupCollisions(game.dino, game.windups);
 	  GamePlay.checkDinoWindupCollisions(game.dino2, game.windups);
 	  GamePlay.drawScore(game.dino, game.context);
 	  GamePlay.drawScore2(game.dino2, game.context);
 	  GamePlay.decrementFruitValues(game.fruits);
-	  if (GamePlay.gameOver2P(game.dino, game.dino2, game.bubbles, game.windups, game.fruits)) {
+	  if (GamePlay.gameOver2P(game.dino, game.dino2)) {
 	    if (game.dino.points > game.dino2.points) {
-	      recordScore2P(game, game.dino);
+	      ScoreKeeper.recordScore2P(game, game.dino);
 	    } else {
-	      recordScore2P(game, game.dino2);
+	      ScoreKeeper.recordScore2P(game, game.dino2);
 	    }
-	    loadHighScores2P();
+	    ScoreKeeper.loadHighScores2P();
+	    clearInterval(game.intID);
 	    GamePlay.endGameSequence2P(game.dino, game.dino2);
 	    return true;
-	  }
-	  var newWindups = GamePlay.levelUp(game.dino, game.fruits, game.windups, game.canvas, game.bubbles);
-	  if (newWindups) {
-	    game.windups = newWindups;
-	    GamePlay.nextLevel2P(game);
 	  }
 	  requestAnimationFrame(gameLoop2P.bind(game));
 	}
@@ -184,6 +181,8 @@
 	    startScreen.className += "hidden";
 	    var themeMusic = document.getElementById("game-music");
 	    themeMusic.play();
+	    game.canvas.setAttribute('width', 400);
+	    game.canvas.style["marginLeft"] = "125px";
 	    requestAnimationFrame(gameLoop.bind(game));
 	  });
 	  instructionsButton.addEventListener('click', function () {
@@ -198,10 +197,7 @@
 	    startScreen.className += "hidden";
 	    var themeMusic = document.getElementById("game-music");
 	    themeMusic.play();
-	    game.dino2 = new Dinosaur(game.canvas, "bub");
-	    game.dino2.x = game.canvas.width - game.dino2.width;
-	    game.dino2.direction = "left";
-	    game.dino.x = 0;
+	    reset2Pgame(game);
 	    requestAnimationFrame(gameLoop2P.bind(game));
 	  });
 	}
@@ -210,11 +206,8 @@
 	  var endScreens = document.getElementsByClassName('new-single');
 	  for (var i = 0; i < endScreens.length; i++) {
 	    endScreens[i].addEventListener('click', function () {
-	      game.dino = new Dinosaur(game.canvas, "bob");
-	      game.windups = [new Windup(game.canvas), new Windup(game.canvas)];
-	      game.bubbles = [];
-	      game.fruits = [];
 	      this.parentElement.className += "hidden";
+	      reset1Pgame(game);
 	      setKeyBindings(game);
 	      requestAnimationFrame(gameLoop.bind(game));
 	    });
@@ -225,117 +218,70 @@
 	  var endScreens = document.getElementsByClassName('new-double');
 	  for (var i = 0; i < endScreens.length; i++) {
 	    endScreens[i].addEventListener('click', function () {
-	      game.dino2 = new Dinosaur(game.canvas, "bub");
-	      game.dino2.x = game.canvas.width - game.dino2.width;
-	      game.dino2.direction = "left";
-	      game.dino.x = 0;
-	      game.dino.lives = 3;
-	      game.dino.level = 1;
-	      game.dino.points = 0;
-	      game.windups = [new Windup(game.canvas), new Windup(game.canvas)];
-	      game.bubbles = [];
-	      game.fruits = [];
 	      this.parentElement.className += "hidden";
 	      setKeyBindings(game);
+	      reset2Pgame(game);
 	      requestAnimationFrame(gameLoop2P.bind(game));
 	    });
 	  }
 	}
 
-	function recordScore(game) {
-	  var scores = localStorage.getItem('high-scores');
-	  if (scores) {
-	    insertScore(scores, game.dino.points);
+	function reset1Pgame(game) {
+	  game.canvas.setAttribute('width', 400);
+	  game.canvas.style["marginLeft"] = "125px";
+	  game.canvas.style["borderTop"] = "10px solid #ff1d8e";
+	  game.canvas.style["borderLeft"] = "10px solid #ff1d8e";
+	  game.canvas.style["borderRight"] = "10px solid #ff1d8e";
+	  game.dino = new Dinosaur(game.canvas, "bob");
+	  game.windups = [new Windup(game.canvas, game.dino), new Windup(game.canvas, game.dino)];
+	  game.bubbles = [];
+	  game.fruits = [];
+	}
+
+	function reset2Pgame(game) {
+	  game.canvas.setAttribute('width', 550);
+	  game.canvas.style["marginLeft"] = "50px";
+	  game.canvas.style["borderTop"] = "20px solid #ff1d8e";
+	  game.canvas.style["borderLeft"] = "20px solid #ff1d8e";
+	  game.canvas.style["borderRight"] = "20px solid #ff1d8e";
+	  game.dino2 = new Dinosaur(game.canvas, "bub");
+	  game.dino2.x = game.canvas.width - game.dino2.width;
+	  game.dino2.direction = "left";
+	  game.dino2.floorHeight = 20;
+	  game.dino.floorHeight = 20;
+	  game.dino.x = 0;
+	  game.dino.y = game.canvas.height - game.dino.height - 20;
+	  game.dino2.y = game.canvas.height - game.dino2.height - 20;
+	  game.windups = [new Windup(game.canvas, game.dino, true), new Windup(game.canvas, game.dino, true), new Windup(game.canvas, game.dino2, true), new Windup(game.canvas, game.dino2, true)];
+	  game.bubbles = [];
+	  game.fruits = [];
+	  game.windups.forEach(function (windup) {
+	    windup.floorHeight = 20;
+	  });
+	  game.dino.lives = 3;
+	  game.dino.points = 0;
+	  game.dino.rebornTime = 0;
+	  game.floors2p = new Levels().twoPlayer(game.canvas);
+	  game.intID = setInterval(makeNewWindups.bind(game), 5000);
+	}
+
+	function makeNewWindups() {
+	  var nw = new Windup(this.canvas, chooseRandomDino(this), true);
+	  nw.floorHeight = 20;
+	  this.windups.push(nw);
+	  nw = new Windup(this.canvas, chooseRandomDino(this), true);
+	  nw.floorHeight = 20;
+	  this.windups.push(nw);
+	}
+
+	function chooseRandomDino(game) {
+	  var dino;
+	  if (Math.random() < 0.5) {
+	    dino = game.dino;
 	  } else {
-	    localStorage.setItem('high-scores', game.dino.points);
+	    dino = game.dino2;
 	  }
-	}
-
-	function recordScore2P(game, winner) {
-	  var scores = localStorage.getItem('high-scores-2p');
-	  if (scores) {
-	    insertScore2P(scores, winner.points);
-	  } else {
-	    localStorage.setItem('high-scores-2p', winner.points);
-	  }
-	}
-
-	function insertScore(scores, score) {
-	  var scoresArr = scores.split(" ");
-	  for (var i = 0; i < scoresArr.length; i++) {
-	    if (score > scoresArr[i]) {
-	      scoresArr.splice(i, 0, score);
-	      break;
-	    }
-	  }
-	  if (score <= scoresArr[scoresArr.length - 1]) {
-	    scoresArr.push(score);
-	  }
-	  localStorage.setItem('high-scores', scoresArr.slice(0, 10).join(" "));
-	}
-
-	function insertScore2P(scores, score) {
-	  var scoresArr = scores.split(" ");
-	  for (var i = 0; i < scoresArr.length; i++) {
-	    if (score > scoresArr[i]) {
-	      scoresArr.splice(i, 0, score);
-	      break;
-	    }
-	  }
-	  if (score <= scoresArr[scoresArr.length - 1]) {
-	    scoresArr.push(score);
-	  }
-	  localStorage.setItem('high-scores-2p', scoresArr.slice(0, 10).join(" "));
-	}
-
-	function loadHighScores() {
-	  removeAllNodes();
-	  addHighScores();
-	}
-
-	function loadHighScores2P() {
-	  removeAllNodes2P();
-	  addHighScores2P();
-	}
-
-	function removeAllNodes() {
-	  var highScoreList = document.getElementById("high-score-list");
-	  while (highScoreList.firstChild) {
-	    highScoreList.removeChild(highScoreList.firstChild);
-	  }
-	}
-
-	function removeAllNodes2P() {
-	  var highScoreList = document.getElementById("high-score-list-double");
-	  while (highScoreList.firstChild) {
-	    highScoreList.removeChild(highScoreList.firstChild);
-	  }
-	}
-
-	function addHighScores() {
-	  var highScoreList = document.getElementById("high-score-list");
-	  var scores = localStorage.getItem('high-scores');
-	  if (scores) {
-	    scores = scores.split(" ");
-	    scores.forEach(function (score) {
-	      var scoreElement = document.createElement("li");
-	      scoreElement.innerHTML = score;
-	      highScoreList.appendChild(scoreElement);
-	    });
-	  }
-	}
-
-	function addHighScores2P() {
-	  var highScoreList = document.getElementById("high-score-list-double");
-	  var scores = localStorage.getItem('high-scores-2p');
-	  if (scores) {
-	    scores = scores.split(" ");
-	    scores.forEach(function (score) {
-	      var scoreElement = document.createElement("li");
-	      scoreElement.innerHTML = score;
-	      highScoreList.appendChild(scoreElement);
-	    });
-	  }
+	  return dino;
 	}
 	module.exports = Game;
 
@@ -378,12 +324,13 @@
 	  this.jumpTotal = 150;
 	  this.jumpSize = this.jumpTotal / this.jumpSteps;
 	  this.level = 1;
+	  this.floorHeight = 10;
 	}
 
 	Dinosaur.prototype.reborn = function () {
 	  if (this.rebornTime === 0) {
 	    this.x = this.canvas.width / 2;
-	    this.y = this.canvas.height - this.height - 10;
+	    this.y = this.canvas.height - this.height - this.floorHeight;
 	    this.direction = "right";
 	    this.rebornTime = 150;
 	    this.lives--;
@@ -632,11 +579,13 @@
 
 /***/ },
 /* 4 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	function Windup(canvas) {
+	var Collision = __webpack_require__(3);
+
+	function Windup(canvas, dino, twoPlayer) {
 	  this.x = Math.random() * (canvas.width - 17);
 	  this.y = 0;
 	  this.height = 20;
@@ -648,6 +597,15 @@
 	  this.direction = "right";
 	  this.img_right = createImage('images/windup_right.png');
 	  this.img_left = createImage('images/windup_left.png');
+	  this.floorHeight = 10;
+	  this.jumpSteps = 20;
+	  this.jumpTotal = 120;
+	  this.jumpSize = this.jumpTotal / this.jumpSteps;
+	  this.status = "falling";
+	  this.dino = dino;
+	  if (twoPlayer) {
+	    this.twoPlayer = true;
+	  }
 	}
 
 	Windup.prototype.draw = function (context) {
@@ -664,22 +622,46 @@
 	};
 
 	Windup.prototype.fall = function () {
-	  if (this.y < this.canvas.height - this.height - 10) {
-	    this.count++;
-	    this.y += this.fallRate;
-	  }
+	  this.y += this.fallRate;
 	  return this;
 	};
 
-	Windup.prototype.move = function (dino) {
-	  if (this.y < this.canvas.height - this.height - 10) {
+	Windup.prototype.move = function (floors) {
+
+	  if (this.status === "falling" && this.y < this.canvas.height - this.height - this.floorHeight) {
 	    this.fall();
-	  } else if (this.x >= dino.x) {
+	  } else if (this.status === "jumping") {
+	    this.jump(floors);
+	  } else if (this.x >= this.dino.x) {
 	    this.direction = "left";
 	    this.x -= this.paceRate;
-	  } else if (this.x < dino.x) {
+	  } else if (this.x < this.dino.x) {
 	    this.direction = "right";
 	    this.x += this.paceRate;
+	  }
+
+	  if (this.status !== "falling" && !onAFloor(floors, this)) {
+	    this.y += 2;
+	  }
+
+	  if (this.status === "falling" && this.y >= this.canvas.height - this.height - this.floorHeight) {
+	    this.status = null;
+	  }
+
+	  if (this.status !== "falling" && this.status !== "jumping" && Math.random() < 0.02 && this.twoPlayer) {
+	    this.status = "jumping";
+	  }
+
+	  return this;
+	};
+
+	Windup.prototype.jump = function (floors) {
+	  if (stillJumpingUp(this)) {
+	    dontHitCeiling(this);
+	  } else if (jumpingDown(this)) {
+	    findNearestFloor(floors, this);
+	  } else if (finishedJumpingAndFalling(this)) {
+	    resetWindup(this);
 	  }
 	  return this;
 	};
@@ -691,6 +673,66 @@
 	  return image;
 	}
 
+	function stillJumpingUp(windup) {
+	  return windup.count < windup.jumpSteps;
+	}
+
+	function dontHitCeiling(windup) {
+	  windup.count++;
+	  if (windup.y - windup.jumpSize > 0) {
+	    windup.y -= windup.jumpSize;
+	  } else {
+	    windup.y = 0;
+	    windup.count = windup.jumpSteps;
+	  }
+	}
+
+	function jumpingDown(windup) {
+	  return windup.count >= windup.jumpSteps && windup.count < 2 * windup.jumpSteps;
+	}
+
+	function findNearestFloor(floors, windup) {
+	  windup.count++;
+	  floors.forEach(function (floor) {
+	    if (onThisFloor(floor, windup)) {
+	      windup.y = floor.y - windup.height;
+	      resetWindup(windup);
+	    }
+	  });
+	  windup.y += windup.jumpSize;
+	  return windup;
+	}
+
+	function onThisFloor(floor, windup) {
+	  var windup_collider = { x: windup.x + windup.width / 2, y: windup.y + windup.height };
+	  var floor_receiver = { minX: floor.x,
+	    maxX: floor.x + floor.width,
+	    minY: floor.y,
+	    maxY: floor.y + floor.height };
+	  if (Collision.collision(windup_collider, floor_receiver)) {
+	    return true;
+	  }
+	}
+
+	function finishedJumpingAndFalling(windup) {
+	  return windup.count === 2 * windup.jumpSteps;
+	}
+
+	function resetWindup(windup) {
+	  windup.status = null;
+	  windup.count = 0;
+	}
+
+	function onAFloor(floors, windup) {
+	  var floor;
+	  for (var i = 0; i < floors.length; i++) {
+	    floor = floors[i];
+	    if (onThisFloor(floor, windup)) {
+	      return true;
+	    }
+	  }
+	  return false;
+	}
 	module.exports = Windup;
 
 /***/ },
@@ -734,8 +776,8 @@
 	  return false;
 	}
 
-	function gameOver2P(dino, dino2, bubbles, windups, fruits) {
-	  if (dino.lives === 0 || dino2.lives === 0 || dino.level === 3 && allFilledBubblesPopped(bubbles) && windups.length === 0 && allFruitsCollected(fruits)) {
+	function gameOver2P(dino, dino2) {
+	  if (dino.lives === 0 || dino2.lives === 0 || dino.points >= 10000 || dino2.points >= 10000) {
 	    return true;
 	  }
 	  return false;
@@ -796,7 +838,6 @@
 	    var dino_receiver = Collision.generateReceiver(dino);
 	    if (Collision.collision(windup_collider, dino_receiver)) {
 	      dino.reborn();
-	      console.log("dino has " + dino.lives + " lives remaining");
 	      return;
 	    }
 	  });
@@ -809,18 +850,20 @@
 	    if (Collision.collision(fruit_collider, dino_receiver) && fruit.collectible()) {
 	      fruit.status = "collected";
 	      dino.points += fruit.points;
-	      console.log("Dino has " + dino.points + " points");
 	    }
 	  });
 	}
 
-	function checkDinoBubbleCollisions(dino, bubbles, fruits, canvas) {
+	function checkDinoBubbleCollisions(dino, bubbles, fruits, canvas, twoPlayer) {
 	  bubbles.forEach(function (bubble) {
 	    var bubble_collider = Collision.generateCollider(bubble);
 	    var dino_receiver = Collision.generateReceiver(dino);
 	    if (Collision.collision(bubble_collider, dino_receiver)) {
 	      if (bubble.filled && bubble.status !== "popped") {
 	        var fruit = new Fruit(canvas, bubble.x, bubble.y, 1000);
+	        if (twoPlayer) {
+	          fruit.floorHeight = 20;
+	        }
 	        fruits.push(fruit);
 	      }
 	      bubble.status = "popped";
@@ -842,9 +885,9 @@
 	  });
 	}
 
-	function drawWindups(windups, context, dino) {
+	function drawWindups(windups, context, dino, floors) {
 	  windups.forEach(function (windup) {
-	    windup.move(dino).draw(context);
+	    windup.move(floors).draw(context);
 	  });
 	}
 
@@ -881,15 +924,15 @@
 	function drawScore2(dino2, context) {
 	  context.font = "16px monospace";
 	  context.fillStyle = "#fff";
-	  context.fillText("Score: " + dino2.points, 275, 20);
-	  context.fillText("Lives: " + dino2.lives, 275, 40);
+	  context.fillText("Score: " + dino2.points, 425, 20);
+	  context.fillText("Lives: " + dino2.lives, 425, 40);
 	  context.fillStyle = "#000";
 	}
 
 	function levelUp(dino, fruits, windups, canvas, bubbles) {
 	  if (levelOver(windups, fruits, dino, bubbles)) {
 	    if (dino.level === 1 || dino.level === 2) {
-	      var newWindups = [new Windup(canvas), new Windup(canvas)];
+	      var newWindups = [new Windup(canvas, dino), new Windup(canvas, dino)];
 	      setTimeout(function () {
 	        dino.level++;
 	      }, 2000);
@@ -1001,7 +1044,7 @@
 
 	"use strict";
 
-	function Fruit(canvas, startingX, startingY, points) {
+	function Fruit(canvas, startingX, startingY, points, floorHeight) {
 	  this.startingY = startingY;
 	  this.x = startingX;
 	  this.y = startingY;
@@ -1013,6 +1056,7 @@
 	  this.fallRate = 0.75;
 	  this.status = "new";
 	  this.image = createFruitImage();
+	  this.floorHeight = 10;
 	}
 
 	Fruit.prototype.draw = function (context) {
@@ -1021,7 +1065,7 @@
 	};
 
 	Fruit.prototype.fall = function () {
-	  if (this.y < this.canvas.height - this.height - 10) {
+	  if (this.y < this.canvas.height - this.height - this.floorHeight) {
 	    this.count++;
 	    this.y += this.fallRate;
 	  }
@@ -1029,7 +1073,7 @@
 	};
 
 	Fruit.prototype.collectible = function () {
-	  return this.y > this.startingY + 10 && this.status !== "collected";
+	  return (this.y > this.startingY + 10 || this.y > this.canvas.height - this.height - 30) && this.status !== "collected";
 	};
 
 	function createImage(imageSrc) {
@@ -1184,6 +1228,10 @@
 	  }
 	};
 
+	Levels.prototype.twoPlayer = function (canvas) {
+	  return [new Floor(canvas, 0, canvas.height - 20, 20, canvas.width), new Floor(canvas, 95, 66, 20, 455), new Floor(canvas, 0, 142, 20, 455), new Floor(canvas, 95, 218, 20, 455), new Floor(canvas, 50, 294, 20, 200), new Floor(canvas, 300, 294, 20, 200)];
+	};
+
 	function levelOne(canvas) {
 	  return [new Floor(canvas, 85, 100, 10, 230), new Floor(canvas, 85, 215, 10, 230), new Floor(canvas, 85, 315, 10, 230), new Floor(canvas, 0, 315, 10, 50), new Floor(canvas, 0, 215, 10, 50), new Floor(canvas, 0, 100, 10, 50), new Floor(canvas, 350, 100, 10, 50), new Floor(canvas, 350, 215, 10, 50), new Floor(canvas, 350, 315, 10, 50), new Floor(canvas, 0, canvas.height - 10, 10, canvas.width)];
 	}
@@ -1230,6 +1278,115 @@
 	};
 
 	module.exports = Floor;
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	function loadHighScores() {
+	  removeAllNodes();
+	  addHighScores();
+	}
+
+	function loadHighScores2P() {
+	  removeAllNodes2P();
+	  addHighScores2P();
+	}
+
+	function removeAllNodes() {
+	  var highScoreList = document.getElementById("high-score-list");
+	  while (highScoreList.firstChild) {
+	    highScoreList.removeChild(highScoreList.firstChild);
+	  }
+	}
+
+	function removeAllNodes2P() {
+	  var highScoreList = document.getElementById("high-score-list-double");
+	  while (highScoreList.firstChild) {
+	    highScoreList.removeChild(highScoreList.firstChild);
+	  }
+	}
+
+	function addHighScores() {
+	  var highScoreList = document.getElementById("high-score-list");
+	  var scores = localStorage.getItem('high-scores');
+	  if (scores) {
+	    scores = scores.split(" ");
+	    scores.forEach(function (score) {
+	      var scoreElement = document.createElement("li");
+	      scoreElement.innerHTML = score;
+	      highScoreList.appendChild(scoreElement);
+	    });
+	  }
+	}
+
+	function addHighScores2P() {
+	  var highScoreList = document.getElementById("high-score-list-double");
+	  var scores = localStorage.getItem('high-scores-2p');
+	  if (scores) {
+	    scores = scores.split(" ");
+	    scores.forEach(function (score) {
+	      var scoreElement = document.createElement("li");
+	      scoreElement.innerHTML = score;
+	      highScoreList.appendChild(scoreElement);
+	    });
+	  }
+	}
+
+	function recordScore(game) {
+	  var scores = localStorage.getItem('high-scores');
+	  if (scores) {
+	    insertScore(scores, game.dino.points);
+	  } else {
+	    localStorage.setItem('high-scores', game.dino.points);
+	  }
+	}
+
+	function recordScore2P(game, winner) {
+	  var scores = localStorage.getItem('high-scores-2p');
+	  if (scores) {
+	    insertScore2P(scores, winner.points);
+	  } else {
+	    localStorage.setItem('high-scores-2p', winner.points);
+	  }
+	}
+
+	function insertScore(scores, score) {
+	  var scoresArr = scores.split(" ");
+	  for (var i = 0; i < scoresArr.length; i++) {
+	    if (score > scoresArr[i]) {
+	      scoresArr.splice(i, 0, score);
+	      break;
+	    }
+	  }
+	  if (score <= scoresArr[scoresArr.length - 1]) {
+	    scoresArr.push(score);
+	  }
+	  localStorage.setItem('high-scores', scoresArr.slice(0, 10).join(" "));
+	}
+
+	function insertScore2P(scores, score) {
+	  var scoresArr = scores.split(" ");
+	  for (var i = 0; i < scoresArr.length; i++) {
+	    if (score > scoresArr[i]) {
+	      scoresArr.splice(i, 0, score);
+	      break;
+	    }
+	  }
+	  if (score <= scoresArr[scoresArr.length - 1]) {
+	    scoresArr.push(score);
+	  }
+	  localStorage.setItem('high-scores-2p', scoresArr.slice(0, 10).join(" "));
+	}
+
+	module.exports.loadHighScores = loadHighScores;
+	module.exports.loadHighScores2P = loadHighScores2P;
+	module.exports.recordScore = recordScore;
+	module.exports.recordScore2P = recordScore2P;
+	module.exports.insertScore = insertScore;
+	module.exports.insertScore2P = insertScore2P;
 
 /***/ }
 /******/ ]);
