@@ -1034,7 +1034,7 @@
 	};
 
 	Fruit.prototype.collectible = function () {
-	  return this.y > this.startingY + 10 && this.status !== "collected";
+	  return (this.y > this.startingY + 10 || this.y > this.canvas.height - this.height - 30) && this.status !== "collected";
 	};
 
 	function createImage(imageSrc) {
