@@ -24,6 +24,8 @@ A single player plays as Bob the friendly dinosaur. He must capture all of the w
 
 Two players can battle each other in the battle zone, using the same keyboard. One plays Bob (in green), and the other plays Bub (in blue). If either player runs out of lives, they lose and the game ends. Otherwise, the first player to 10,000 points wins.
 
+![Gif](http://recordit.co/CAgkMS6US1.gif)
+
 ### Testing
 
 Unit tests were written using Chai. They can be run by cloning down the project, running `npm install` and `npm start`, and then visiting `http://localhost:8080/webpack-dev-server/test.html`
