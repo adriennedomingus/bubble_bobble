@@ -6,3 +6,4 @@ require('../test/fruits-test');
 require('../test/floors-test');
 require('../test/levels-test');
 require('../test/game-play-test');
+require('../test/jump-test');
