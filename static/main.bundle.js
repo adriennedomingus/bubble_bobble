@@ -326,6 +326,7 @@
 	  this.jumpSize = this.jumpTotal / this.jumpSteps;
 	  this.level = 1;
 	  this.floorHeight = 10;
+	  this.jump = new Jump();
 	}
 
 	Dinosaur.prototype.reborn = function () {
@@ -403,9 +404,9 @@
 	    this.rebornTime--;
 	  }
 	  if (this.status === "jumping") {
-	    new Jump().jump(floors, this);
+	    this.jump.jump(floors, this);
 	  }
-	  if (!new Jump().onAFloor(floors, this)) {
+	  if (!this.jump.onAFloor(floors, this)) {
 	    this.y += 2;
 	  }
 	  return this;
@@ -620,6 +621,7 @@
 	  this.jumpSize = this.jumpTotal / this.jumpSteps;
 	  this.status = "falling";
 	  this.dino = dino;
+	  this.jump = new Jump();
 	  if (twoPlayer) {
 	    this.twoPlayer = true;
 	  }
@@ -647,7 +649,7 @@
 	  if (this.status === "falling" && this.y < this.canvas.height - this.height - this.floorHeight) {
 	    this.fall();
 	  } else if (this.status === "jumping") {
-	    new Jump().jump(floors, this);
+	    this.jump.jump(floors, this);
 	  } else if (this.x >= this.dino.x) {
 	    this.direction = "left";
 	    this.x -= this.paceRate;
@@ -656,7 +658,7 @@
 	    this.x += this.paceRate;
 	  }
 
-	  if (this.status !== "falling" && !new Jump().onAFloor(floors, this)) {
+	  if (this.status !== "falling" && !this.jump.onAFloor(floors, this)) {
 	    this.y += 2;
 	  }
 
@@ -925,6 +927,7 @@
 
 	function endGameSequence(dino) {
 	  nextLevel(null);
+	  dino.level = 0;
 	  if (dino.lives === 0) {
 	    setTimeout(function () {
 	      document.getElementById('end-game-lose').className = "";
@@ -1169,6 +1172,8 @@
 	    return levelTwo(canvas);
 	  } else if (level === 3) {
 	    return levelThree(canvas);
+	  } else if (level === 0) {
+	    return this.twoPlayer(canvas);
 	  }
 	};
 
