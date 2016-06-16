@@ -59,10 +59,10 @@
 	'use strict';
 
 	var Dinosaur = __webpack_require__(2);
-	var Windup = __webpack_require__(4);
-	var GamePlay = __webpack_require__(5);
-	var Levels = __webpack_require__(8);
-	var ScoreKeeper = __webpack_require__(10);
+	var Windup = __webpack_require__(5);
+	var GamePlay = __webpack_require__(6);
+	var Levels = __webpack_require__(9);
+	var ScoreKeeper = __webpack_require__(11);
 
 	function Game(canvas) {
 	  this.canvas = canvas;
@@ -289,9 +289,10 @@
 /* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	var Collision = __webpack_require__(3);
+	var Jump = __webpack_require__(4);
 
 	function Dinosaur(canvas, bubOrBob) {
 	  this.height = 25;
@@ -402,24 +403,12 @@
 	    this.rebornTime--;
 	  }
 	  if (this.status === "jumping") {
-	    this.jump(floors);
+	    new Jump().jump(floors, this);
 	  }
-	  if (!onAFloor(floors, this)) {
+	  if (!new Jump().onAFloor(floors, this)) {
 	    this.y += 2;
 	  }
 	  return this;
-	};
-
-	Dinosaur.prototype.jump = function (floors) {
-	  var dino = this;
-	  if (stillJumpingUp(dino)) {
-	    dontHitCeiling(dino);
-	  } else if (jumpingDown(dino)) {
-	    findNearestFloor(floors, dino);
-	  } else if (finishedJumpingAndFalling(dino)) {
-	    resetDino(dino);
-	  }
-	  return dino;
 	};
 
 	Dinosaur.prototype.setJumpingStatus = function () {
@@ -428,54 +417,9 @@
 	  }
 	};
 
-	function onThisFloor(floor, dino) {
-	  var dino_collider = { x: dino.x + dino.width / 2, y: dino.y + dino.height };
-	  var floor_receiver = { minX: floor.x,
-	    maxX: floor.x + floor.width,
-	    minY: floor.y,
-	    maxY: floor.y + floor.height };
-	  if (Collision.collision(dino_collider, floor_receiver)) {
-	    return true;
-	  }
-	}
-
-	function stillJumpingUp(dino) {
-	  return dino.count < dino.jumpSteps;
-	}
-
-	function jumpingDown(dino) {
-	  return dino.count >= dino.jumpSteps && dino.count < 2 * dino.jumpSteps;
-	}
-
-	function finishedJumpingAndFalling(dino) {
-	  return dino.count === 2 * dino.jumpSteps;
-	}
-
 	function resetDino(dino) {
 	  dino.status = null;
 	  dino.count = 0;
-	}
-
-	function findNearestFloor(floors, dino) {
-	  dino.count++;
-	  floors.forEach(function (floor) {
-	    if (onThisFloor(floor, dino)) {
-	      dino.y = floor.y - floor.height / 2 - dino.height - 2;
-	      resetDino(dino);
-	    }
-	  });
-	  dino.y += dino.jumpSize;
-	  return dino;
-	}
-
-	function dontHitCeiling(dino) {
-	  dino.count++;
-	  if (dino.y - dino.jumpSize > 0) {
-	    dino.y -= dino.jumpSize;
-	  } else {
-	    dino.y = 0;
-	    dino.count = dino.jumpSteps;
-	  }
 	}
 
 	function createImage(imageSrc) {
@@ -483,17 +427,6 @@
 	  image.src = imageSrc;
 	  image.style.visibility = 'hidden';
 	  return image;
-	}
-
-	function onAFloor(floors, dino) {
-	  var floor;
-	  for (var i = 0; i < floors.length; i++) {
-	    floor = floors[i];
-	    if (onThisFloor(floor, dino)) {
-	      return true;
-	    }
-	  }
-	  return false;
 	}
 
 	function findVerticalFloors(floors) {
@@ -585,6 +518,90 @@
 
 	var Collision = __webpack_require__(3);
 
+	function Jump() {}
+
+	Jump.prototype.jump = function (floors, element) {
+	  if (stillJumpingUp(element)) {
+	    dontHitCeiling(element);
+	  } else if (jumpingDown(element)) {
+	    findNearestFloor(floors, element);
+	  } else if (finishedJumpingAndFalling(element)) {
+	    resetElement(element);
+	  }
+	  return this;
+	};
+
+	Jump.prototype.onThisFloor = function (floor, element) {
+	  var element_collider = { x: element.x + element.width / 2, y: element.y + element.height };
+	  var floor_receiver = { minX: floor.x,
+	    maxX: floor.x + floor.width,
+	    minY: floor.y,
+	    maxY: floor.y + floor.height };
+	  if (Collision.collision(element_collider, floor_receiver)) {
+	    return true;
+	  }
+	};
+
+	Jump.prototype.onAFloor = function (floors, windup) {
+	  var floor;
+	  for (var i = 0; i < floors.length; i++) {
+	    floor = floors[i];
+	    if (new Jump().onThisFloor(floor, windup)) {
+	      return true;
+	    }
+	  }
+	  return false;
+	};
+
+	function stillJumpingUp(element) {
+	  return element.count < element.jumpSteps;
+	}
+
+	function dontHitCeiling(element) {
+	  element.count++;
+	  if (element.y - element.jumpSize > 0) {
+	    element.y -= element.jumpSize;
+	  } else {
+	    element.y = 0;
+	    element.count = element.jumpSteps;
+	  }
+	}
+
+	function jumpingDown(element) {
+	  return element.count >= element.jumpSteps && element.count < 2 * element.jumpSteps;
+	}
+
+	function findNearestFloor(floors, element) {
+	  element.count++;
+	  floors.forEach(function (floor) {
+	    if (new Jump().onThisFloor(floor, element)) {
+	      element.y = floor.y - floor.height / 2 - element.height - 2;
+	      resetElement(element);
+	    }
+	  });
+	  element.y += element.jumpSize;
+	  return element;
+	}
+
+	function finishedJumpingAndFalling(element) {
+	  return element.count === 2 * element.jumpSteps;
+	}
+
+	function resetElement(element) {
+	  element.status = null;
+	  element.count = 0;
+	}
+
+	module.exports = Jump;
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var Jump = __webpack_require__(4);
+
 	function Windup(canvas, dino, twoPlayer) {
 	  this.x = Math.random() * (canvas.width - 17);
 	  this.y = 0;
@@ -627,11 +644,10 @@
 	};
 
 	Windup.prototype.move = function (floors) {
-
 	  if (this.status === "falling" && this.y < this.canvas.height - this.height - this.floorHeight) {
 	    this.fall();
 	  } else if (this.status === "jumping") {
-	    this.jump(floors);
+	    new Jump().jump(floors, this);
 	  } else if (this.x >= this.dino.x) {
 	    this.direction = "left";
 	    this.x -= this.paceRate;
@@ -640,7 +656,7 @@
 	    this.x += this.paceRate;
 	  }
 
-	  if (this.status !== "falling" && !onAFloor(floors, this)) {
+	  if (this.status !== "falling" && !new Jump().onAFloor(floors, this)) {
 	    this.y += 2;
 	  }
 
@@ -650,18 +666,6 @@
 
 	  if (this.status !== "falling" && this.status !== "jumping" && Math.random() < 0.02 && this.twoPlayer) {
 	    this.status = "jumping";
-	  }
-
-	  return this;
-	};
-
-	Windup.prototype.jump = function (floors) {
-	  if (stillJumpingUp(this)) {
-	    dontHitCeiling(this);
-	  } else if (jumpingDown(this)) {
-	    findNearestFloor(floors, this);
-	  } else if (finishedJumpingAndFalling(this)) {
-	    resetWindup(this);
 	  }
 	  return this;
 	};
@@ -673,70 +677,10 @@
 	  return image;
 	}
 
-	function stillJumpingUp(windup) {
-	  return windup.count < windup.jumpSteps;
-	}
-
-	function dontHitCeiling(windup) {
-	  windup.count++;
-	  if (windup.y - windup.jumpSize > 0) {
-	    windup.y -= windup.jumpSize;
-	  } else {
-	    windup.y = 0;
-	    windup.count = windup.jumpSteps;
-	  }
-	}
-
-	function jumpingDown(windup) {
-	  return windup.count >= windup.jumpSteps && windup.count < 2 * windup.jumpSteps;
-	}
-
-	function findNearestFloor(floors, windup) {
-	  windup.count++;
-	  floors.forEach(function (floor) {
-	    if (onThisFloor(floor, windup)) {
-	      windup.y = floor.y - windup.height;
-	      resetWindup(windup);
-	    }
-	  });
-	  windup.y += windup.jumpSize;
-	  return windup;
-	}
-
-	function onThisFloor(floor, windup) {
-	  var windup_collider = { x: windup.x + windup.width / 2, y: windup.y + windup.height };
-	  var floor_receiver = { minX: floor.x,
-	    maxX: floor.x + floor.width,
-	    minY: floor.y,
-	    maxY: floor.y + floor.height };
-	  if (Collision.collision(windup_collider, floor_receiver)) {
-	    return true;
-	  }
-	}
-
-	function finishedJumpingAndFalling(windup) {
-	  return windup.count === 2 * windup.jumpSteps;
-	}
-
-	function resetWindup(windup) {
-	  windup.status = null;
-	  windup.count = 0;
-	}
-
-	function onAFloor(floors, windup) {
-	  var floor;
-	  for (var i = 0; i < floors.length; i++) {
-	    floor = floors[i];
-	    if (onThisFloor(floor, windup)) {
-	      return true;
-	    }
-	  }
-	  return false;
-	}
 	module.exports = Windup;
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -765,9 +709,9 @@
 	exports.endGameSequence2P = endGameSequence2P;
 	exports.decrementFruitValues = decrementFruitValues;
 	var Collision = __webpack_require__(3);
-	var Fruit = __webpack_require__(6);
-	var Windup = __webpack_require__(4);
-	var Bubble = __webpack_require__(7);
+	var Fruit = __webpack_require__(7);
+	var Windup = __webpack_require__(5);
+	var Bubble = __webpack_require__(8);
 
 	function gameOver(dino, bubbles, windups, fruits) {
 	  if (dino.lives === 0 || dino.level === 3 && allFilledBubblesPopped(bubbles) && windups.length === 0 && allFruitsCollected(fruits)) {
@@ -1039,7 +983,7 @@
 	}
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1090,7 +1034,7 @@
 	module.exports = Fruit;
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1209,12 +1153,12 @@
 	module.exports = Bubble;
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Floor = __webpack_require__(9);
+	var Floor = __webpack_require__(10);
 
 	function Levels() {}
 
@@ -1258,7 +1202,7 @@
 	module.exports = Levels;
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1280,7 +1224,7 @@
 	module.exports = Floor;
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports) {
 
 	"use strict";

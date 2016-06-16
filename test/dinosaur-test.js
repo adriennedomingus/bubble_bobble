@@ -105,21 +105,6 @@ describe('dinosaur', function(){
     });
   });
 
-  it('jumps', function(){
-    this.dino.jump([]);
-    assert.equal(this.dino.y, 65-this.dino.jumpSize);
-    assert.equal(this.dino.count, 1);
-    this.dino.count = 21;
-    this.dino.jump([]);
-    assert.equal(this.dino.y, 65);
-    assert.equal(this.dino.count, 22);
-    this.dino.count = 40;
-    this.dino.jump([]);
-    assert.equal(this.dino.y, 65);
-    assert.equal(this.dino.count, 0);
-    assert.equal(this.dino.status, null);
-  });
-
   it('can be reborn', function(){
     this.dino.reborn();
     assert.equal(this.dino.x, 100);
